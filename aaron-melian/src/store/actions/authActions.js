@@ -28,9 +28,6 @@ export const signIn = (credentials) => {
               err.code = "auth/google-linked";
               err.message = "Google account exists. Sign in with Google!";
             }
-
-            console.log(resp.docs[0].data());
-            // dispatch({ type: "LOGIN_SUCCESS", userInfo: resp.docs[0].data() });
             dispatch({ type: "LOGIN_ERROR", err });
           })
           .catch((e) => {

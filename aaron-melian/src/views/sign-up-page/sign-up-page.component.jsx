@@ -69,7 +69,6 @@ function SignUpPage(props) {
       .where(constants.USERNAME_INPUT_PROPS.name, "==", username)
       .get()
       .then((resp) => {
-        console.log(resp.docs[0].data());
         if (resp.docs[0] && resp.docs[0].data()) {
           setUsernameError(constants.SIGN_UP_CALL_ERROR_TEXTS.USERNAME_TAKEN);
           formReady = false;
