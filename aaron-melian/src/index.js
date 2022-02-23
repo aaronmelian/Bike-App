@@ -1,17 +1,55 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+// React
+import React from "react";
+import ReactDOM from "react-dom";
+
+// Firebase
+import firebase from "firebase/compat/app";
+import { getFirebase, ReactReduxFirebaseProvider } from "react-redux-firebase";
+import {
+  reduxFirestore,
+  getFirestore,
+  createFirestoreInstance,
+} from "redux-firestore";
+import fbConfig from "./fbConfig";
+
+// Redux
+import { createStore, applyMiddleware, compose } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
+import rootReducer from "./store/reducers/rootReducer";
+
+// Components
+import App from "./App";
+
+// Styles
+import "./index.css";
+
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
+    reduxFirestore(fbConfig, {
+      useFirestoreForProfile: true,
+      userProfile: "user",
+    }),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+const rrfProps = {
+  firebase,
+  config: fbConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance,
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider {...rrfProps}>
+        <App />
+      </ReactReduxFirebaseProvider>
+    </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
