@@ -13,7 +13,7 @@ import { Form, Input, Button } from "antd";
 import { constants } from "./login-page.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
 
-function LogInPage() {
+const LogInPage = () => {
   const [logInError, setLogInError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -68,7 +68,7 @@ function LogInPage() {
       <Form
         name={constants.FORM_NAME}
         initialValues={{
-          email: "aaronimelian@gmail.comm",
+          email: "managertest@test.com",
           password: "123456",
         }}
         onFinish={onFinish}
@@ -96,6 +96,6 @@ function LogInPage() {
       </p>
     </>
   );
-}
+};
 
 export default LogInPage;

@@ -21,6 +21,9 @@ import rootReducer from "./store/reducers/rootReducer";
 // Components
 import App from "./App";
 
+// AntD
+import "antd/dist/antd.css";
+
 // Styles
 import "./index.css";
 
@@ -44,12 +47,10 @@ const rrfProps = {
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ReactReduxFirebaseProvider {...rrfProps}>
-        <App />
-      </ReactReduxFirebaseProvider>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <App />
+    </ReactReduxFirebaseProvider>
+  </Provider>,
   document.getElementById("root")
 );

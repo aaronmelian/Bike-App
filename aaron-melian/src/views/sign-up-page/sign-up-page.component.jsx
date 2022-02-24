@@ -13,7 +13,10 @@ import { routes } from "../../hoc/customRouter/custom-router.routes";
 // Firebase
 import firebase from "../../fbConfig";
 
-function SignUpPage(props) {
+// Axios
+import axios from "axios";
+
+const SignUpPage = () => {
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [emailErrorConfirmation, setEmailErrorConfirmation] = useState("");
@@ -88,6 +91,7 @@ function SignUpPage(props) {
       });
 
     if (formReady) {
+      const imgUrl = await getRandomProfileImage();
       const auth = firebase.auth();
       auth
         .createUserWithEmailAndPassword(email, password)
@@ -102,6 +106,7 @@ function SignUpPage(props) {
               username,
               email,
               uid,
+              imgUrl,
             })
             .catch((error) => {
               console.log(error);
@@ -134,6 +139,13 @@ function SignUpPage(props) {
     setPasswordError("");
     setEmailErrorConfirmation("");
     setPasswordErrorConfirmation("");
+  };
+
+  const getRandomProfileImage = async () => {
+    const userData = await axios.get("https://randomuser.me/api/");
+    if (userData.data && userData.data.results[0]) {
+      return userData.data.results[0].picture.thumbnail;
+    }
   };
 
   return (
@@ -186,6 +198,6 @@ function SignUpPage(props) {
       </p>
     </>
   );
-}
+};
 
 export default SignUpPage;

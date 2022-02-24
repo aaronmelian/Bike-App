@@ -1,27 +1,24 @@
 // React
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Redux
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getData } from "../../store/actions/authActions";
 
-// Components
+// Views
+import ManagerPage from "../../views/manager-page/manager-page.component";
 import LogInPage from "../../views/login-page/login-page.component";
 import SignUpPage from "../../views/sign-up-page/sign-up-page.component";
-import LogOut from "../../components/LogOut/LogOut";
+
+// Components
+import LogOut from "../../components/log-out/log-out.component";
 
 // Constants
 import { routes } from "./custom-router.routes";
-import { globalConstants } from "../../globalConstants/globalConstants.constants";
-
-// Firebase
-import firebase from "../../fbConfig";
 
 const UserPage = () => {
   return <h3>UserPage</h3>;
-};
-const ManagerPage = () => {
-  return <h3>ManagerPage</h3>;
 };
 
 const RequireAuthUserPage = ({ children, firebaseUserData, isManager }) => {
@@ -51,37 +48,28 @@ const CantBeAuth = ({ children }) => {
 };
 
 const CustomRouter = () => {
-  const [isManager, setIsManager] = useState(false);
   const firebaseUserData = useSelector((state) => state.firebase.auth);
+  const userData = useSelector((state) => state.auth.userInfo);
+  const dispatch = useDispatch();
 
-  const checkAdmin = async () => {
-    await firebase
-      .firestore()
-      .collection(globalConstants.COLLECTIONS.USERS)
-      .where(globalConstants.EMAIL, "==", firebaseUserData.email)
-      .get()
-      .then((resp) => {
-        if (
-          resp.docs[0] &&
-          resp.docs[0].data() &&
-          resp.docs[0].data().isManager
-        ) {
-          setIsManager(true);
-        }
-      });
-  };
+  const isManager = userData && userData.isManager;
 
   useEffect(() => {
     if (!firebaseUserData.isEmpty) {
-      checkAdmin();
+      dispatch(
+        getData({
+          email: firebaseUserData.email,
+        })
+      );
     }
-  }, [firebaseUserData]);
-  console.log(isManager);
+  }, [firebaseUserData, dispatch]);
 
   return (
     <section>
       <BrowserRouter>
-        <LogOut />
+        <header className="App-header">
+          {!firebaseUserData.isEmpty && <LogOut />}
+        </header>
         <Routes>
           <Route
             index
