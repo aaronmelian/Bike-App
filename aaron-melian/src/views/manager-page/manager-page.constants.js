@@ -18,4 +18,12 @@ export const constants = {
     PRIMARY: "primary",
     DEFAULT: "default",
   },
+  POPOVER_PROPS: {
+    placement: "topRight",
+    trigger: "click",
+  },
+  POPOVER_BUTTON_PROPS: {
+    shape: "circle",
+  },
+  BIKE_MODAL_TITLE: "Add a Bike!",
 };

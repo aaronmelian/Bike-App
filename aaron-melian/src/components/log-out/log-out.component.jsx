@@ -11,6 +11,10 @@ import "firebase/compat/firestore";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../store/actions/authActions";
 
+// Constants
+import { constants } from "./log-out.constants";
+import { routes } from "../../hoc/customRouter/custom-router.routes";
+
 const LogOut = () => {
   const auth = firebase.auth();
   const navigate = useNavigate();
@@ -19,10 +23,14 @@ const LogOut = () => {
   const logUserOut = () => {
     auth.signOut();
     dispatch(logOut());
-    navigate("/");
+    navigate(routes.EMPTY);
   };
 
-  return <button onClick={() => logUserOut()}>Log Out</button>;
+  return (
+    <button onClick={() => logUserOut()}>
+      {constants.LOG_OUT_BUTTON_TEXT}
+    </button>
+  );
 };
 
 export default LogOut;

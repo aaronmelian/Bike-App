@@ -2,19 +2,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-// Antd
-import { Form, Input, Button } from "antd";
+// Firebase
+import firebase from "../../fbConfig";
+
+// Axios
+import axios from "axios";
 
 // Constants
 import { globalConstants } from "../../globalConstants/globalConstants.constants";
 import { constants } from "./sign-up-page.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
 
-// Firebase
-import firebase from "../../fbConfig";
-
-// Axios
-import axios from "axios";
+// Antd
+import { Form, Input, Button } from "antd";
 
 const SignUpPage = () => {
   const [usernameError, setUsernameError] = useState("");
@@ -114,10 +114,10 @@ const SignUpPage = () => {
         })
         .catch((err) => {
           switch (err.code) {
-            case "auth/invalid-email":
+            case constants.INVALID_EMAIL:
               setEmailError(constants.SIGN_UP_CALL_ERROR_TEXTS.BAD_EMAIL);
               break;
-            case "auth/weak-password":
+            case constants.WEAK_PASSWORD:
               setPasswordError(
                 constants.SIGN_UP_CALL_ERROR_TEXTS.WEAK_PASSWORD
               );
@@ -142,7 +142,7 @@ const SignUpPage = () => {
   };
 
   const getRandomProfileImage = async () => {
-    const userData = await axios.get("https://randomuser.me/api/");
+    const userData = await axios.get(globalConstants.USER_PICTURE_ENDPOINT);
     if (userData.data && userData.data.results[0]) {
       return userData.data.results[0].picture.thumbnail;
     }
@@ -153,9 +153,9 @@ const SignUpPage = () => {
       <Form
         name={constants.FORM_NAME}
         initialValues={{
-          username: "aaronm",
-          email: "aaronimelian@gmail.comm",
-          emailConfirmation: "aaronimelian@gmail.comm",
+          username: "test2",
+          email: "test2@test.com",
+          emailConfirmation: "test2@test.com",
           password: "123456",
           passwordConfirmation: "123456",
         }}

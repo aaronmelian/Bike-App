@@ -42,4 +42,8 @@ export const constants = {
     BAD_EMAIL: "The email address is badly formatted.",
     WEAK_PASSWORD: "Password should be at least 6 characters.",
   },
+  SIGN_UP_CALL_ERROR_CASES: {
+    INVALID_EMAIL: "auth/invalid-email",
+    WEAK_PASSWORD: "auth/weak-password",
+  },
 };

@@ -9,50 +9,58 @@ import { collection, doc, setDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { getBikes } from "../../store/actions/bikeActions";
 
-// AntD
-import { Modal, Form, Input, Select, message } from "antd";
-
 // Components
 import Backrop from "../backdrop/backdrop.component";
 import Icon from "../icon/icon.component";
-
-// Styles
-import {
-  FormItemWrapper,
-  IconWrapperStyled,
-} from "./bike-modal.component.styled";
 
 // Constants
 import { constants } from "../bike-modal/bike-modal.constants";
 import { globalConstants } from "../../globalConstants/globalConstants.constants";
 
-const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
+// AntD
+import { Input, Form, Modal, message, Select } from "antd";
+
+// Styles
+import {
+  colotInputStyles,
+  bikeModalStyles,
+  FormItemWrapper,
+  IconWrapperStyled,
+} from "./bike-modal.component.styled";
+
+const BikeModal = ({ bikeData, cancelBikeAddModal, editing, show, title }) => {
   const { model, color, location } = bikeData;
-  const [bikeColor, setBikeColor] = useState(color || "#000000");
-  const [bikeType, setBikeType] = useState(model || "allAround");
+  const [bikeColor, setBikeColor] = useState(
+    color || constants.DEFAULT_STATE.COLOR
+  );
+  const [bikeType, setBikeType] = useState(
+    model || constants.DEFAULT_STATE.MODEL
+  );
   const dispatch = useDispatch();
 
   const addBike = async (bikeFormData) => {
-    const newBike = doc(collection(firebase.firestore(), "bikes"));
+    const newBike = doc(
+      collection(firebase.firestore(), globalConstants.COLLECTIONS.BIKES)
+    );
     setDoc(newBike, { ...bikeFormData, id: newBike.id });
-    setBikeType("allAround");
-    setBikeColor("#000000");
-    message.success("Bike registered!");
+    setBikeType(constants.DEFAULT_STATE.MODEL);
+    setBikeColor(constants.DEFAULT_STATE.COLOR);
+    message.success(constants.ADD_BIKE_SUCCESS_MESSAGE);
     dispatch(getBikes());
-    cancelUserModal();
+    cancelBikeAddModal();
   };
 
   const editBike = async (bikeFormData) => {
     firebase
       .firestore()
-      .collection("bikes")
+      .collection(globalConstants.COLLECTIONS.BIKES)
       .doc(bikeData.id)
       .update({
         ...bikeFormData,
       });
-    message.success("Bike edited!");
+    message.success(constants.EDIT_BIKE_SUCCESS_MESSAGE);
     dispatch(getBikes());
-    cancelUserModal();
+    cancelBikeAddModal();
   };
 
   const handleOk = (bikeFormData) => {
@@ -64,7 +72,7 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
     }
   };
   const onCancel = () => {
-    cancelUserModal();
+    cancelBikeAddModal();
   };
 
   const { Option } = Select;
@@ -74,8 +82,7 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
       <Modal
         title={title}
         visible={show}
-        okText="Confirm"
-        cancelText="Cancel"
+        {...constants.MODAL_PROPS}
         onCancel={onCancel}
         onOk={() => {
           form
@@ -85,7 +92,7 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
               handleOk(values);
             })
             .catch((info) => {
-              console.log("Validate Failed:", info);
+              console.log(constants.VALIDATE_FAILED_TEXT, info);
             });
         }}
       >
@@ -96,15 +103,20 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
           form={form}
           id={constants.FORM_NAME}
           name={constants.FORM_NAME}
-          initialValues={{ model: model, color: color, location: location }}
+          initialValues={{
+            model: model || constants.DEFAULT_STATE.MODEL,
+            color: color || constants.DEFAULT_STATE.COLOR,
+            location: location,
+          }}
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
+            ...bikeModalStyles,
           }}
         >
           <FormItemWrapper>
-            <Form.Item name="model" label="Model" rules={[{ required: true }]}>
+            <Form.Item
+              {...constants.MODEL_SELECT_PROPS}
+              rules={[{ required: true }]}
+            >
               <Select onChange={(type) => setBikeType(type)}>
                 {globalConstants.BIKE_MODELS.OPTIONS.map((opt) => {
                   return (
@@ -120,7 +132,7 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
             <Form.Item
               {...constants.LOCATION_INPUT_PROPS}
               rules={[
-                { required: true, message: "Please provide a location." },
+                { required: true, message: constants.LOCATION_INPUT_MESSAGE },
               ]}
             >
               <Input />
@@ -132,8 +144,8 @@ const BikeModal = ({ show, cancelUserModal, title, bikeData, editing }) => {
               rules={[{ required: true }]}
             >
               <Input
-                style={{ cursor: "pointer" }}
-                type="color"
+                style={{ ...colotInputStyles }}
+                type={constants.COLOR_INPUT_TYPE}
                 onBlur={(val) => setBikeColor(val.target.value)}
               />
             </Form.Item>

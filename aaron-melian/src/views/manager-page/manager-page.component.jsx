@@ -1,24 +1,25 @@
 // React
 import React, { useState } from "react";
 
+// Components
+import BikeModal from "../../components/bike-modal/bike-modal.component";
+import UserModal from "../../components/user-modal/user-modal.component";
+
+// Constants
+import { constants } from "./manager-page.constants";
+
 // Antd
 import { Button, Popover } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 // Styles
 import {
-  ManagerPageWrapperStyled,
-  BreadCrumbButtonWrapperStyled,
-  AffixButtonWrapperStyled,
   AddBikeOrUserWrapperStyled,
+  AffixButtonWrapperStyled,
+  BreadCrumbButtonWrapperStyled,
+  ManagerPageWrapperStyled,
+  margin4pxStyle,
 } from "./manager-page.component.styled";
-
-// Constants
-import { constants } from "./manager-page.constants";
-
-// Components
-import UserModal from "../../components/user-modal/user-modal.component";
-import BikeModal from "../../components/bike-modal/bike-modal.component";
 
 const ManagerPage = () => {
   const [activeComponent, setActiveComponent] = useState(0);
@@ -58,14 +59,14 @@ const ManagerPage = () => {
       <Button
         onClick={() => openBikeModal()}
         type={constants.BUTTON_PROPS.PRIMARY}
-        style={{ margin: "4px" }}
+        style={{ ...margin4pxStyle }}
       >
         Add Bike
       </Button>
       <Button
         onClick={() => openUserModal()}
         type={constants.BUTTON_PROPS.PRIMARY}
-        style={{ margin: "4px" }}
+        style={{ ...margin4pxStyle }}
       >
         Add User
       </Button>
@@ -93,19 +94,17 @@ const ManagerPage = () => {
       {renderComponent(activeComponent)}
       <AffixButtonWrapperStyled>
         <Popover
-          placement="topRight"
+          {...constants.POPOVER_PROPS}
           content={menu}
-          trigger="click"
           visible={isSharePopoverVisible}
           onVisibleChange={handlePopoverVisibleChange}
         >
           <Button
             icon={<PlusOutlined />}
             type={constants.BUTTON_PROPS.PRIMARY}
-            shape="circle"
+            {...constants.POPOVER_BUTTON_PROPS}
           />
         </Popover>
-        {/* <Dropdown overlay={menu} placement="topRight" arrow></Dropdown> */}
       </AffixButtonWrapperStyled>
       {showUserModal && (
         <UserModal show={showUserModal} cancelUserModal={cancelUserModal} />
@@ -113,8 +112,8 @@ const ManagerPage = () => {
       {showBikeModal && (
         <BikeModal
           show={showBikeModal}
-          cancelUserModal={cancelBikeModal}
-          title="Add a Bike!"
+          cancelBikeAddModal={cancelBikeModal}
+          title={constants.BIKE_MODAL_TITLE}
           bikeData={{}}
         />
       )}

@@ -1,17 +1,17 @@
 // React
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../store/actions/authActions";
 
-// Antd
-import { Form, Input, Button } from "antd";
-
 // Constants
 import { constants } from "./login-page.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
+
+// Antd
+import { Button, Form, Input } from "antd";
 
 const LogInPage = () => {
   const [logInError, setLogInError] = useState("");

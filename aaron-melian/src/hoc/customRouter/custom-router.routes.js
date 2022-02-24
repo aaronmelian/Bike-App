@@ -4,4 +4,5 @@ export const routes = {
   USER: "/user",
   MANAGER: "/manager",
   FALL_BACK: "/*",
+  EMPTY: "/",
 };

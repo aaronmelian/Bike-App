@@ -15,3 +15,9 @@ export const IconWrapperStyled = styled.div`
   min-width: 200px;
 `;
 IconWrapperStyled.displayName = "IconWrapperStyled";
+
+export const centeredFlexStyled = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
+};

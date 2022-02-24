@@ -15,3 +15,12 @@ export const IconWrapperStyled = styled.div`
   min-width: 200px;
 `;
 IconWrapperStyled.displayName = "IconWrapperStyled";
+
+export const bikeModalStyles = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
+};
+export const colotInputStyles = {
+  cursor: "pointer",
+};

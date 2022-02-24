@@ -3,7 +3,9 @@ export const globalConstants = {
     USERS: "users",
     BIKES: "bikes",
   },
+  USER_PICTURE_ENDPOINT: "https://randomuser.me/api/",
   EMAIL: "email",
+  DAY: "day",
   BIKE_MODELS: {
     OPTIONS: [
       { value: "allAround", label: "All Around" },
@@ -11,4 +13,5 @@ export const globalConstants = {
       { value: "racing", label: "Racing" },
     ],
   },
+  DATE_FORMAT: "MM-DD-YYYY",
 };

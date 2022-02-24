@@ -11,34 +11,59 @@ import { getBikes } from "../../store/actions/bikeActions";
 
 // Components
 import BikeModal from "../bike-modal/bike-modal.component";
-import RentBikeModal from "../rent-bike-modal/rent-bike-modal.component";
+import CancelBikeModal from "../cancel-bike-modal/cancel-bike-modal.component";
 import Icon from "../icon/icon.component";
+import RentBikeModal from "../rent-bike-modal/rent-bike-modal.component";
+
+// Utils
+import {
+  hasOngoingReservation,
+  isBikeAvailableOnRange,
+} from "../../utils/mainUtils";
 
 // Constants
 import { globalConstants } from "../../globalConstants/globalConstants.constants";
+import { constants } from "./bike-list.constants";
 
 // AntD
-import { Card, Rate, Button, Popconfirm, message } from "antd";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Divider,
+  message,
+  Popconfirm,
+  Rate,
+} from "antd";
 
 // Styles
 import {
   BikeListWrapperStyled,
-  IconWrapperStyled,
   BikeModelWrapperStyled,
   ButtonWrapperStyled,
+  IconWrapperStyled,
+  ModelTextTitleStyled,
+  RangePickerWrapperStyled,
+  RatingTitleStyled,
+  RatingWrapperStyled,
 } from "./bike-list.component.styled";
 
 const BikeList = ({ currentList }) => {
   const [showBikeModal, setShowBikeModal] = useState(false);
   const [showRentBikeModal, setShowRentBikeModal] = useState(false);
+  const [showCancelReserveModal, setShowCancelReserveModal] = useState(false);
+
   const [bikeData, setBikeData] = useState({});
+  const [bikeToCancel, setBikeToCancel] = useState(null);
   const [filteredBikeList, setFilteredBikeList] = useState(null);
+  const [requestedDates, setRequestedDates] = useState([]);
 
   const bikeList = useSelector((state) => state.bikes.bikeList);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const isManager = userInfo && userInfo.isManager;
 
   const dispatch = useDispatch();
+  const { RangePicker } = DatePicker;
 
   const deleteBike = async (id) => {
     await deleteDoc(
@@ -54,7 +79,7 @@ const BikeList = ({ currentList }) => {
     if (prevRating) {
       firebase
         .firestore()
-        .collection("bikes")
+        .collection(globalConstants.COLLECTIONS.BIKES)
         .doc(bike.id)
         .update({
           ratingList: firebase.firestore.FieldValue.arrayRemove(prevRating),
@@ -62,7 +87,7 @@ const BikeList = ({ currentList }) => {
     }
     firebase
       .firestore()
-      .collection("bikes")
+      .collection(globalConstants.COLLECTIONS.BIKES)
       .doc(bike.id)
       .update({
         ratingList: firebase.firestore.FieldValue.arrayUnion({
@@ -70,13 +95,15 @@ const BikeList = ({ currentList }) => {
           id: userInfo.uid,
         }),
       });
-    message.success("Bike rated!!");
+    message.success(constants.RATE_BIKE_SUCCESS_MESSAGE);
     dispatch(getBikes());
   };
 
-  const cancelBikeModal = () => {
+  const closeBikeModal = () => {
     setShowBikeModal(false);
     setShowRentBikeModal(false);
+    setShowCancelReserveModal(false);
+    setBikeToCancel(null);
   };
 
   const handleShowBikeModal = (id) => {
@@ -96,32 +123,48 @@ const BikeList = ({ currentList }) => {
   }, [dispatch, bikeList.length]);
 
   useEffect(() => {
+    setRequestedDates([]);
+  }, [currentList, bikeList]);
+
+  useEffect(() => {
+    let newList = [...bikeList];
     if (userInfo && bikeList.length && currentList) {
-      if (currentList === "Rate") {
-        setFilteredBikeList(
-          bikeList.filter((bike) => {
-            if (bike.rentList) {
-              return bike.rentList.find((rent) => {
-                return rent.by.id === userInfo.uid;
-              });
-            } else {
-              return false;
-            }
-          })
-        );
-      } else if (currentList === "Bikes") {
-        setFilteredBikeList(bikeList.filter((bike) => !bike.rented));
+      if (currentList === constants.TABS.RESERVATIONS) {
+        newList = bikeList.filter((bike) => {
+          if (bike.rentList) {
+            return bike.rentList.find((rent) => {
+              return rent.by.id === userInfo.uid;
+            });
+          } else {
+            return false;
+          }
+        });
       }
     }
-  }, [userInfo, bikeList, currentList]);
+    if (requestedDates && requestedDates.length > 0) {
+      newList = newList.filter((bike) => {
+        return isBikeAvailableOnRange(
+          bike,
+          requestedDates[0],
+          requestedDates[1]
+        );
+      });
+    }
+    setFilteredBikeList(newList);
+  }, [userInfo, bikeList, currentList, requestedDates]);
+
+  const handleCancelReserve = (bike) => {
+    setShowCancelReserveModal(true);
+    setBikeToCancel(bike);
+  };
 
   return (
     <>
       {showBikeModal && (
         <BikeModal
           show={showBikeModal}
-          cancelUserModal={cancelBikeModal}
-          title={"Edit this Bike!"}
+          cancelBikeAddModal={() => closeBikeModal()}
+          title={constants.MODAL_TITLES.EDIT_BIKE}
           bikeData={bikeData}
           editing
         />
@@ -129,15 +172,31 @@ const BikeList = ({ currentList }) => {
       {showRentBikeModal && (
         <RentBikeModal
           show={showRentBikeModal}
-          cancelUserModal={cancelBikeModal}
-          title={"Rent this Bike!"}
+          cancelRentBikeModal={closeBikeModal}
+          title={constants.MODAL_TITLES.RENT_BIKE}
           bikeData={bikeData}
-          editing
         />
       )}
+      {showCancelReserveModal && (
+        <CancelBikeModal
+          show={showCancelReserveModal}
+          cancelCancelRentBikeModal={closeBikeModal}
+          title={constants.MODAL_TITLES.CANCEL_BIKE_RESERVATION}
+          bikeToCancel={bikeToCancel}
+        />
+      )}
+      {!isManager && currentList !== constants.TABS.RESERVATIONS && (
+        <RangePickerWrapperStyled>
+          <RangePicker
+            value={requestedDates}
+            onChange={(dates) => setRequestedDates(dates)}
+          />
+        </RangePickerWrapperStyled>
+      )}
+
       <BikeListWrapperStyled>
         {bikeList.length !== 0 &&
-          (filteredBikeList || bikeList).map((bike, i) => {
+          (filteredBikeList || bikeList).map((bike) => {
             const prevRating =
               userInfo &&
               bike.ratingList &&
@@ -163,27 +222,34 @@ const BikeList = ({ currentList }) => {
                 <IconWrapperStyled>
                   <Icon icon={bike.model} color={bike.color} />
                 </IconWrapperStyled>
-                <div>
-                  <p>Av. Rating:</p>
+                <RatingWrapperStyled>
+                  <RatingTitleStyled>
+                    {constants.AVERAGE_RATING_TEXT}
+                  </RatingTitleStyled>
                   <Rate disabled={true} allowHalf value={ratingaverage} />
-                </div>
-                {currentList === "Rate" && (
-                  <div>
-                    <p>Your Rating:</p>
+                </RatingWrapperStyled>
+                <Divider />
+                {currentList === constants.TABS.RESERVATIONS && (
+                  <RatingWrapperStyled>
+                    <RatingTitleStyled>
+                      {constants.YOUR_RATING_TEXT}
+                    </RatingTitleStyled>
                     <Rate
                       allowHalf
-                      disabled={currentList !== "Rate"}
+                      disabled={currentList !== constants.TABS.RESERVATIONS}
                       defaultValue={(prevRating && prevRating.rating) || 5}
                       onChange={(val) => rateBike(val, bike)}
                     />
-                  </div>
+                  </RatingWrapperStyled>
                 )}
                 <BikeModelWrapperStyled>
-                  {
-                    globalConstants.BIKE_MODELS.OPTIONS.find(
-                      (option) => bike.model === option.value
-                    ).label
-                  }
+                  <ModelTextTitleStyled>
+                    {
+                      globalConstants.BIKE_MODELS.OPTIONS.find(
+                        (option) => bike.model === option.value
+                      ).label
+                    }
+                  </ModelTextTitleStyled>
                 </BikeModelWrapperStyled>
                 {isManager && (
                   <ButtonWrapperStyled>
@@ -191,29 +257,39 @@ const BikeList = ({ currentList }) => {
                       style={{ width: 80, margin: 4 }}
                       onClick={() => handleShowBikeModal(bike.id)}
                     >
-                      Edit
+                      {constants.EDIT_BUTTON_PROPS.text}
                     </Button>
                     <Popconfirm
-                      placement="topRight"
-                      title={"Are you sure to delete this bike?"}
+                      {...constants.POPCONFIRM_PROPS}
                       onConfirm={() => deleteBike(bike.id)}
-                      okText="Yes"
-                      cancelText="No"
                     >
-                      <Button style={{ width: 80, margin: 4 }}>Delete</Button>
+                      <Button style={{ width: 80, margin: 4 }}>
+                        {constants.DELETE_BUTTON_PROPS.text}
+                      </Button>
                     </Popconfirm>
                   </ButtonWrapperStyled>
                 )}
-                {currentList === "Bikes" && (
+                {currentList === constants.TABS.BIKES && (
                   <ButtonWrapperStyled>
                     <Button
                       style={{ width: 80, margin: 4 }}
                       onClick={() => handleShowRentBikeModal(bike.id)}
                     >
-                      Rent
+                      {constants.RENT_BUTTON_PROPS.text}
                     </Button>
                   </ButtonWrapperStyled>
                 )}
+                {currentList === constants.TABS.RESERVATIONS &&
+                  hasOngoingReservation(bike.id, filteredBikeList) && (
+                    <ButtonWrapperStyled>
+                      <Button
+                        style={{ width: 80, margin: 4 }}
+                        onClick={() => handleCancelReserve(bike)}
+                      >
+                        {constants.CANCEL_BUTTON_PROPS.text}
+                      </Button>
+                    </ButtonWrapperStyled>
+                  )}
               </Card>
             );
           })}

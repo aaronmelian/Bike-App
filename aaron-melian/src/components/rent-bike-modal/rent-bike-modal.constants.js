@@ -1,11 +1,15 @@
 export const constants = {
-  FORM_NAME: "addBike",
-  LOCATION_INPUT_PROPS: {
-    label: "Location",
-    name: "location",
+  FORM_NAME: "rentBike",
+  RENT_BIKE_SUCCESS_MESSAGE: "Bike rented!",
+  RENT_BIKE_DATES_ERROR_MESSAGE: "Please do not select occupied dates.",
+  MODAL_PROPS: {
+    okText: "Confirm",
+    cancelText: "Cancel",
   },
-  COLOR_INPUT_PROPS: {
-    label: "Color",
-    name: "color",
+  MODAL_RENT_ERROR_LOG: "Validate Failed:",
+  DATE_RANGE_INPUT_PROPS: {
+    name: "dateRange",
+    label: "Date Range",
   },
+  DATE_RANGE_INPUT_REQUIRED_MESSAGE: "Please select your rent dates",
 };

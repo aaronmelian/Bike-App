@@ -1,9 +1,8 @@
 // React
-import React, { useState } from "react";
+import React from "react";
 
 // Firebase
 import firebase from "../../fbConfig";
-import { collection, doc, setDoc } from "firebase/firestore";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -12,49 +11,57 @@ import { getBikes } from "../../store/actions/bikeActions";
 // Moment
 import moment from "moment";
 
-// AntD
-import { Modal, Form, DatePicker, message } from "antd";
-
 // Components
 import Backrop from "../backdrop/backdrop.component";
 import Icon from "../icon/icon.component";
 
+// Utils
+import {
+  isDateContainedInTwoDates,
+  momentConfig,
+  momentToMMDDYYYY,
+} from "../../utils/mainUtils";
+
+// AntD
+import { Modal, Form, DatePicker, message } from "antd";
+
+// Constants
+import { constants } from "../rent-bike-modal/rent-bike-modal.constants";
+import { globalConstants } from "../../globalConstants/globalConstants.constants";
+
 // Styles
 import {
+  centeredFlexStyled,
   FormItemWrapper,
   IconWrapperStyled,
 } from "./rent-bike-modal.component.styled";
 
-// Constants
-import { constants } from "../bike-modal/bike-modal.constants";
-import { globalConstants } from "../../globalConstants/globalConstants.constants";
-
-const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
-  const userInfo = useSelector((state) => state.auth.userInfo);
-
-  const { model, color, location } = bikeData;
+const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
   const { RangePicker } = DatePicker;
+
+  const userInfo = useSelector((state) => state.auth.userInfo);
+  const [form] = Form.useForm();
+  const { color, location, model } = bikeData;
 
   const dispatch = useDispatch();
 
   const rentBike = async (bikeFormData) => {
     const rentedObj = {
-      rentStart: moment(bikeFormData.dateRange[0]).format("MM/DD/YY"),
-      rentEnd: moment(bikeFormData.dateRange[1]).format("MM/DD/YY"),
+      rentStart: momentToMMDDYYYY(bikeFormData.dateRange[0]),
+      rentEnd: momentToMMDDYYYY(bikeFormData.dateRange[1]),
       by: { id: userInfo.uid, avatar: userInfo.imgUrl },
       bike: bikeData.id,
     };
-
     firebase
       .firestore()
-      .collection("bikes")
+      .collection(globalConstants.COLLECTIONS.BIKES)
       .doc(bikeData.id)
       .update({
         rentList: firebase.firestore.FieldValue.arrayUnion(rentedObj),
       });
-    message.success("Bike rented!");
+    message.success(constants.RENT_BIKE_SUCCESS_MESSAGE);
     dispatch(getBikes());
-    cancelUserModal();
+    cancelRentBikeModal();
   };
 
   const handleOk = (bikeFormData) => {
@@ -62,7 +69,7 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
     rentBike(bikeFormData);
   };
   const onCancel = () => {
-    cancelUserModal();
+    cancelRentBikeModal();
   };
 
   const checkIfHasDisabledInside = (bikeFormData) => {
@@ -70,14 +77,18 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
 
     if (bikeData.rentList) {
       const checkeableRents = bikeData.rentList.filter((rent) => {
-        return moment(rent.rentEnd).startOf("day") >= moment().startOf("day");
+        return (
+          momentConfig(rent.rentEnd).startOf(globalConstants.DAY) >=
+          momentConfig().startOf(globalConstants.DAY)
+        );
       });
       checkeableRents.forEach((rent) => {
         if (
-          moment(rent.rentStart).startOf("day") >=
-            moment(bikeFormData.dateRange[0]).startOf("day") &&
-          moment(rent.rentStart).endOf("day") <=
-            moment(bikeFormData.dateRange[1]).startOf("day")
+          isDateContainedInTwoDates(
+            rent.rentStart,
+            bikeFormData.dateRange[0],
+            bikeFormData.dateRange[1]
+          )
         ) {
           allow = false;
         }
@@ -87,22 +98,19 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
       form.resetFields();
       handleOk(bikeFormData);
     } else {
-      message.error("Please do not select occupied dates.");
+      message.error(constants.RENT_BIKE_DATES_ERROR_MESSAGE);
     }
   };
 
   const disabledDate = (current) => {
-    if (current && current < moment().startOf("day")) {
+    if (current && current < moment().startOf(globalConstants.DAY)) {
       return true;
     }
 
     if (bikeData.rentList && bikeData.rentList.length) {
       let disable = false;
       bikeData.rentList.forEach((rent) => {
-        if (
-          moment(rent.rentStart).startOf("day") <= current &&
-          moment(rent.rentEnd).endOf("day") >= current
-        ) {
+        if (isDateContainedInTwoDates(current, rent.rentStart, rent.rentEnd)) {
           disable = true;
         }
       });
@@ -111,14 +119,12 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
     }
   };
 
-  const [form] = Form.useForm();
   return (
     <Backrop show={show}>
       <Modal
         title={title}
         visible={show}
-        okText="Confirm"
-        cancelText="Cancel"
+        {...constants.MODAL_PROPS}
         onCancel={onCancel}
         onOk={() => {
           form
@@ -127,7 +133,7 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
               checkIfHasDisabledInside(values);
             })
             .catch((info) => {
-              console.log("Validate Failed:", info);
+              console.log(constants.MODAL_RENT_ERROR_LOG, info);
             });
         }}
       >
@@ -140,17 +146,17 @@ const RentBikeModal = ({ show, cancelUserModal, title, bikeData }) => {
           name={constants.FORM_NAME}
           initialValues={{ model: model, color: color, location: location }}
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
+            ...centeredFlexStyled,
           }}
         >
           <FormItemWrapper>
             <Form.Item
-              name="dateRange"
-              label="Date Range"
+              {...constants.DATE_RANGE_INPUT_PROPS}
               rules={[
-                { required: true, message: "Please select your rent dates" },
+                {
+                  required: true,
+                  message: constants.DATE_RANGE_INPUT_REQUIRED_MESSAGE,
+                },
               ]}
             >
               <RangePicker disabledDate={disabledDate} />

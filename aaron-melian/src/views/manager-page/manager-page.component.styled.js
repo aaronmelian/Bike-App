@@ -23,3 +23,7 @@ export const AddBikeOrUserWrapperStyled = styled.span`
   flex-direction: column;
 `;
 AddBikeOrUserWrapperStyled.displayName = "AddBikeOrUserWrapperStyled";
+
+export const margin4pxStyle = {
+  margin: "4px",
+};

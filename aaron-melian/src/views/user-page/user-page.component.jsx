@@ -1,18 +1,17 @@
 // React
 import React, { useState } from "react";
 
+// Constants
+import { constants } from "./user-page.constants";
+
 // Antd
-import { Button, Popover } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
 // Styles
 import {
-  UserPageWrapperStyled,
   BreadCrumbButtonWrapperStyled,
+  UserPageWrapperStyled,
 } from "./user-page.component.styled";
-
-// Constants
-import { constants } from "./user-page.constants";
 
 const UserPage = () => {
   const [activeComponent, setActiveComponent] = useState(0);
