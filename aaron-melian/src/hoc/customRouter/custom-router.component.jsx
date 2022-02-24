@@ -7,19 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { getData } from "../../store/actions/authActions";
 
 // Views
-import ManagerPage from "../../views/manager-page/manager-page.component";
 import LogInPage from "../../views/login-page/login-page.component";
+import ManagerPage from "../../views/manager-page/manager-page.component";
 import SignUpPage from "../../views/sign-up-page/sign-up-page.component";
+import UserPage from "../../views/user-page/user-page.component";
 
 // Components
 import LogOut from "../../components/log-out/log-out.component";
 
 // Constants
 import { routes } from "./custom-router.routes";
-
-const UserPage = () => {
-  return <h3>UserPage</h3>;
-};
 
 const RequireAuthUserPage = ({ children, firebaseUserData, isManager }) => {
   if (firebaseUserData.isEmpty) {

@@ -49,11 +49,7 @@ export const getData = ({ email }) => {
       .where(globalConstants.EMAIL, "==", email)
       .get()
       .then((resp) => {
-        if (
-          resp.docs[0] &&
-          resp.docs[0].data() &&
-          resp.docs[0].data().isManager
-        ) {
+        if (resp.docs[0] && resp.docs[0].data()) {
           dispatch({
             type: "USER_DATA_SUCCESS",
             userInfo: resp.docs[0].data(),

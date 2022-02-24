@@ -22,15 +22,10 @@ export const BikeModelWrapperStyled = styled.div`
 `;
 BikeModelWrapperStyled.displayName = "BikeModelWrapperStyled";
 
-export const EditRemoveButtonWrapperStyled = styled.div`
+export const ButtonWrapperStyled = styled.div`
   margin: 0 auto;
   margin-top: 12px;
   width: 100%;
   justify-content: center;
 `;
-EditRemoveButtonWrapperStyled.displayName = "EditRemoveButtonWrapperStyled";
-
-export const SpaceStyled = styled.div`
-  height: 31.5px;
-`;
-SpaceStyled.displayName = "SpaceStyled";
+ButtonWrapperStyled.displayName = "ButtonWrapperStyled";
