@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const FormItemWrapper = styled.div`
   margin: 4px;
-  min-width: 250px;
   width: 100%;
 `;
 FormItemWrapper.displayName = "FormItemWrapper";

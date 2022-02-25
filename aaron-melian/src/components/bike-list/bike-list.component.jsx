@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBikes } from "../../store/actions/bikeActions";
 
 // Components
+import BikeHistoryModal from "../bike-history-modal/bike-history-modal.component";
 import BikeModal from "../bike-modal/bike-modal.component";
 import CancelBikeModal from "../cancel-bike-modal/cancel-bike-modal.component";
 import Icon from "../icon/icon.component";
@@ -42,6 +43,7 @@ import {
   BikeModelWrapperStyled,
   ButtonWrapperStyled,
   IconWrapperStyled,
+  historyButtonStyled,
   ModelTextTitleStyled,
   RangePickerWrapperStyled,
   RatingTitleStyled,
@@ -52,9 +54,11 @@ const BikeList = ({ currentList }) => {
   const [showBikeModal, setShowBikeModal] = useState(false);
   const [showRentBikeModal, setShowRentBikeModal] = useState(false);
   const [showCancelReserveModal, setShowCancelReserveModal] = useState(false);
+  const [showBikeHistoryModal, setShowBikeHistoryModal] = useState(false);
 
   const [bikeData, setBikeData] = useState({});
   const [bikeToCancel, setBikeToCancel] = useState(null);
+  const [bikeHistory, setBikeHistory] = useState(null);
   const [filteredBikeList, setFilteredBikeList] = useState(null);
   const [requestedDates, setRequestedDates] = useState([]);
 
@@ -103,6 +107,8 @@ const BikeList = ({ currentList }) => {
     setShowBikeModal(false);
     setShowRentBikeModal(false);
     setShowCancelReserveModal(false);
+    setShowBikeHistoryModal(false);
+    setBikeHistory(null);
     setBikeToCancel(null);
   };
 
@@ -114,6 +120,11 @@ const BikeList = ({ currentList }) => {
   const handleShowRentBikeModal = (id) => {
     setBikeData(bikeList.find((bike) => bike.id === id));
     setShowRentBikeModal(true);
+  };
+
+  const handleShowBikeHistoryModal = (bike) => {
+    setShowBikeHistoryModal(true);
+    setBikeHistory(bike.rentList);
   };
 
   useEffect(() => {
@@ -185,6 +196,14 @@ const BikeList = ({ currentList }) => {
           bikeToCancel={bikeToCancel}
         />
       )}
+      {showBikeHistoryModal && (
+        <BikeHistoryModal
+          show={showBikeHistoryModal}
+          cancelBikeHistoryModal={closeBikeModal}
+          title={constants.MODAL_TITLES.BIKE_HISTORY}
+          bikeHistory={bikeHistory}
+        />
+      )}
       {!isManager && currentList !== constants.TABS.RESERVATIONS && (
         <RangePickerWrapperStyled>
           <RangePicker
@@ -219,6 +238,14 @@ const BikeList = ({ currentList }) => {
                 bordered={true}
                 style={{ width: 240, margin: 4 }}
               >
+                {isManager && (
+                  <Button
+                    onClick={() => handleShowBikeHistoryModal(bike)}
+                    style={{ ...historyButtonStyled }}
+                  >
+                    History
+                  </Button>
+                )}
                 <IconWrapperStyled>
                   <Icon icon={bike.model} color={bike.color} />
                 </IconWrapperStyled>

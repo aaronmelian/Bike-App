@@ -52,3 +52,7 @@ export const RangePickerWrapperStyled = styled.h4`
   margin: 10px auto;
 `;
 RangePickerWrapperStyled.displayName = "RangePickerWrapperStyled";
+
+export const historyButtonStyled = {
+  marginBottom: "10px",
+};

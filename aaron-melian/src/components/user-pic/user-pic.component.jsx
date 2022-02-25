@@ -11,19 +11,17 @@ import { constants } from "./user-pic.constants";
 import { Image } from "antd";
 
 // Styles
-import { imageStyles, UserPicWrapper } from "./user-pic.component.styled";
+import { imageStyles } from "./user-pic.component.styled";
 
-const UserPic = () => {
+const UserPic = ({ picUrl }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
 
   return userInfo && userInfo.imgUrl ? (
-    <UserPicWrapper>
-      <Image
-        {...constants.IMAGE_PROPS}
-        style={{ ...imageStyles }}
-        src={userInfo.imgUrl}
-      />
-    </UserPicWrapper>
+    <Image
+      {...constants.IMAGE_PROPS}
+      style={{ ...imageStyles }}
+      src={picUrl || userInfo.imgUrl}
+    />
   ) : null;
 };
 

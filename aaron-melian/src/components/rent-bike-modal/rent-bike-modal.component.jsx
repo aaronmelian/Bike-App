@@ -49,7 +49,11 @@ const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
     const rentedObj = {
       rentStart: momentToMMDDYYYY(bikeFormData.dateRange[0]),
       rentEnd: momentToMMDDYYYY(bikeFormData.dateRange[1]),
-      by: { id: userInfo.uid, avatar: userInfo.imgUrl },
+      by: {
+        id: userInfo.uid,
+        avatar: userInfo.imgUrl,
+        username: userInfo.username,
+      },
       bike: bikeData.id,
     };
     firebase
@@ -76,13 +80,12 @@ const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
     let allow = true;
 
     if (bikeData.rentList) {
-      const checkeableRents = bikeData.rentList.filter((rent) => {
-        return (
-          momentConfig(rent.rentEnd).startOf(globalConstants.DAY) >=
-          momentConfig().startOf(globalConstants.DAY)
+      bikeData.rentList.forEach((rent) => {
+        const a = isDateContainedInTwoDates(
+          rent.rentStart,
+          bikeFormData.dateRange[0],
+          bikeFormData.dateRange[1]
         );
-      });
-      checkeableRents.forEach((rent) => {
         if (
           isDateContainedInTwoDates(
             rent.rentStart,

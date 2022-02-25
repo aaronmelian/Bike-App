@@ -124,10 +124,10 @@ const SignUpPage = () => {
         })
         .catch((err) => {
           switch (err.code) {
-            case constants.INVALID_EMAIL:
+            case constants.SIGN_UP_CALL_ERROR_CASES.INVALID_EMAIL:
               setEmailError(constants.SIGN_UP_CALL_ERROR_TEXTS.BAD_EMAIL);
               break;
-            case constants.WEAK_PASSWORD:
+            case constants.SIGN_UP_CALL_ERROR_CASES.WEAK_PASSWORD:
               setPasswordError(
                 constants.SIGN_UP_CALL_ERROR_TEXTS.WEAK_PASSWORD
               );

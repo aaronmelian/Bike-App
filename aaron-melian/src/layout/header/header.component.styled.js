@@ -33,5 +33,9 @@ LogoutWrapperStyled.displayName = "LogoutWrapperStyled";
 
 export const UserPicWrapperStyled = styled.div`
   margin-left: 8px;
+  display: none;
+  @media (min-width: 576px) {
+    display: flex;
+  }
 `;
 UserPicWrapperStyled.displayName = "UserPicWrapperStyled";
