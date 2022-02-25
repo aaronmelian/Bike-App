@@ -2,6 +2,12 @@ import styled from "styled-components";
 
 export const AppTitleStyled = styled.h1`
   margin: 0 auto;
+  margin-left: 20px;
+  width: 100%;
+  @media (min-width: 576px) {
+    text-align: center;
+    margin: 0;
+  }
 `;
 AppTitleStyled.displayName = "AppTitleStyled";
 
@@ -18,7 +24,14 @@ export const HeaderWrapperStyled = styled.div`
 HeaderWrapperStyled.displayName = "HeaderWrapperStyled";
 
 export const LogoutWrapperStyled = styled.div`
+  align-items: center;
+  display: flex;
   position: absolute;
   right: 10px;
 `;
 LogoutWrapperStyled.displayName = "LogoutWrapperStyled";
+
+export const UserPicWrapperStyled = styled.div`
+  margin-left: 8px;
+`;
+UserPicWrapperStyled.displayName = "UserPicWrapperStyled";

@@ -154,7 +154,7 @@ const SignUpPage = () => {
   const getRandomProfileImage = async () => {
     const userData = await axios.get(globalConstants.USER_PICTURE_ENDPOINT);
     if (userData.data && userData.data.results[0]) {
-      return userData.data.results[0].picture.thumbnail;
+      return userData.data.results[0].picture.large;
     }
   };
 

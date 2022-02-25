@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 // Components
 import LogOut from "../../components/log-out/log-out.component";
+import UserPic from "../../components/user-pic/user-pic.component";
 
 // Constants
 import { constants } from "./header.constants";
@@ -15,6 +16,7 @@ import {
   AppTitleStyled,
   HeaderWrapperStyled,
   LogoutWrapperStyled,
+  UserPicWrapperStyled,
 } from "./header.component.styled";
 
 const Header = () => {
@@ -25,6 +27,9 @@ const Header = () => {
       <AppTitleStyled>{constants.APP_TITLE}</AppTitleStyled>
       <LogoutWrapperStyled>
         {!firebaseUserData.isEmpty && <LogOut />}
+        <UserPicWrapperStyled>
+          <UserPic />
+        </UserPicWrapperStyled>
       </LogoutWrapperStyled>
     </HeaderWrapperStyled>
   );
