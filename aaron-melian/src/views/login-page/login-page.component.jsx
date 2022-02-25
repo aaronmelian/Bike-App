@@ -13,6 +13,16 @@ import { routes } from "../../hoc/customRouter/custom-router.routes";
 // Antd
 import { Button, Form, Input } from "antd";
 
+// Styles
+import {
+  ErrorTextStyled,
+  FormWrapperStyled,
+  LoginButtonWrapperStyled,
+  signUpLinkStyled,
+  SignUpLinkWrapperStyled,
+  WelcomeTextStyled,
+} from "./login-page.component.styled";
+
 const LogInPage = () => {
   const [logInError, setLogInError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -64,7 +74,8 @@ const LogInPage = () => {
   }, [authError]);
 
   return (
-    <>
+    <FormWrapperStyled>
+      <WelcomeTextStyled>{constants.WELCOME_MESSAGE_TEXT}</WelcomeTextStyled>
       <Form
         name={constants.FORM_NAME}
         initialValues={{
@@ -76,25 +87,29 @@ const LogInPage = () => {
         <Form.Item {...constants.EMAIL_INPUT_PROPS}>
           <Input />
         </Form.Item>
-        <p>{emailError}</p>
+        <ErrorTextStyled>{emailError}</ErrorTextStyled>
 
         <Form.Item {...constants.PASSWORD_INPUT_PROPS}>
           <Input.Password />
         </Form.Item>
-        <p>{passwordError}</p>
+        <ErrorTextStyled>{passwordError}</ErrorTextStyled>
+        <ErrorTextStyled>{logInError}</ErrorTextStyled>
 
         <Form.Item>
-          <Button {...constants.LOGIN_BUTTON_PROPS}>
-            {constants.LOGIN_BUTTON_TEXT}
-          </Button>
+          <LoginButtonWrapperStyled>
+            <Button {...constants.LOGIN_BUTTON_PROPS}>
+              {constants.LOGIN_BUTTON_TEXT}
+            </Button>
+          </LoginButtonWrapperStyled>
         </Form.Item>
-        <p>{logInError}</p>
       </Form>
-      <p>
+      <SignUpLinkWrapperStyled>
         {constants.NOT_SIGNED_UP_MESSAGE}
-        <Link to={routes.SIGN_UP}>{constants.SIGN_UP_LINK_TEXT}</Link>
-      </p>
-    </>
+        <Link style={{ ...signUpLinkStyled }} to={routes.SIGN_UP}>
+          {constants.SIGN_UP_LINK_TEXT}
+        </Link>
+      </SignUpLinkWrapperStyled>
+    </FormWrapperStyled>
   );
 };
 

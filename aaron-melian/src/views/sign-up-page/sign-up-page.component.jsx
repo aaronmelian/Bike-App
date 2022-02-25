@@ -16,6 +16,16 @@ import { routes } from "../../hoc/customRouter/custom-router.routes";
 // Antd
 import { Form, Input, Button } from "antd";
 
+// Styles
+import {
+  ErrorTextStyled,
+  FormWrapperStyled,
+  loginLinkStyled,
+  LoginLinkWrapperStyled,
+  SignUpButtonWrapperStyled,
+  WelcomeTextStyled,
+} from "./sign-up-page.component.styled";
+
 const SignUpPage = () => {
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -149,7 +159,8 @@ const SignUpPage = () => {
   };
 
   return (
-    <>
+    <FormWrapperStyled>
+      <WelcomeTextStyled>{constants.WELCOME_MESSAGE_TEXT}</WelcomeTextStyled>
       <Form
         name={constants.FORM_NAME}
         initialValues={{
@@ -164,39 +175,43 @@ const SignUpPage = () => {
         <Form.Item {...constants.USERNAME_INPUT_PROPS}>
           <Input />
         </Form.Item>
-        <p>{usernameError}</p>
+        <ErrorTextStyled>{usernameError}</ErrorTextStyled>
 
         <Form.Item {...constants.EMAIL_INPUT_PROPS}>
           <Input />
         </Form.Item>
-        <p>{emailError}</p>
+        <ErrorTextStyled>{emailError}</ErrorTextStyled>
 
         <Form.Item {...constants.EMAIL_CONFIRMATION_INPUT_PROPS}>
           <Input />
         </Form.Item>
-        <p>{emailErrorConfirmation}</p>
+        <ErrorTextStyled>{emailErrorConfirmation}</ErrorTextStyled>
 
         <Form.Item {...constants.PASSWORD_INPUT_PROPS}>
           <Input.Password />
         </Form.Item>
-        <p>{passwordError}</p>
+        <ErrorTextStyled>{passwordError}</ErrorTextStyled>
 
         <Form.Item {...constants.PASSWORD_CONFIRMATION_INPUT_PROPS}>
           <Input.Password />
         </Form.Item>
-        <p>{passwordErrorConfirmation}</p>
+        <ErrorTextStyled>{passwordErrorConfirmation}</ErrorTextStyled>
 
         <Form.Item>
-          <Button {...constants.SIGN_UP_BUTTON_PROPS}>
-            {constants.SIGN_UP_BUTTON_TEXT}
-          </Button>
+          <SignUpButtonWrapperStyled>
+            <Button {...constants.SIGN_UP_BUTTON_PROPS}>
+              {constants.SIGN_UP_BUTTON_TEXT}
+            </Button>
+          </SignUpButtonWrapperStyled>
         </Form.Item>
       </Form>
-      <p>
+      <LoginLinkWrapperStyled>
         {constants.ALREADY_SIGNED_UP_MESSAGE}
-        <Link to={routes.LOGIN}>{constants.LOGIN_LINK_TEXT}</Link>
-      </p>
-    </>
+        <Link style={{ ...loginLinkStyled }} to={routes.LOGIN}>
+          {constants.LOGIN_LINK_TEXT}
+        </Link>
+      </LoginLinkWrapperStyled>
+    </FormWrapperStyled>
   );
 };
 

@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
 export const FormItemWrapper = styled.div`
-  width: 50%;
-  min-width: 200px;
   margin: 4px;
+  min-width: 200px;
+  width: 50%;
 `;
 FormItemWrapper.displayName = "FormItemWrapper";
 
 export const IconWrapperStyled = styled.div`
   display: flex;
-  margin: 6px auto;
   justify-content: center;
-  width: 40%;
+  margin: 6px auto;
   min-width: 200px;
+  width: 40%;
 `;
 IconWrapperStyled.displayName = "IconWrapperStyled";
 

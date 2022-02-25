@@ -11,6 +11,9 @@ import "firebase/compat/firestore";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../store/actions/authActions";
 
+// AntD
+import { Button } from "antd";
+
 // Constants
 import { constants } from "./log-out.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
@@ -27,9 +30,12 @@ const LogOut = () => {
   };
 
   return (
-    <button onClick={() => logUserOut()}>
+    <Button
+      type={constants.LOG_OUT_BUTTON_TEXT_TYPE}
+      onClick={() => logUserOut()}
+    >
       {constants.LOG_OUT_BUTTON_TEXT}
-    </button>
+    </Button>
   );
 };
 

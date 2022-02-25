@@ -37,8 +37,8 @@ export const constants = {
     EMAIL_MATCH: "Emails must match.",
   },
   SIGN_UP_CALL_ERROR_TEXTS: {
-    USERNAME_TAKEN: "Username is already in use, choose another one or log in.",
-    EMAIL_TAKEN: "Email is already in use, choose another one or log in.",
+    USERNAME_TAKEN: "Username is already in use.",
+    EMAIL_TAKEN: "Email is already in use.",
     BAD_EMAIL: "The email address is badly formatted.",
     WEAK_PASSWORD: "Password should be at least 6 characters.",
   },
@@ -46,4 +46,6 @@ export const constants = {
     INVALID_EMAIL: "auth/invalid-email",
     WEAK_PASSWORD: "auth/weak-password",
   },
+  WELCOME_MESSAGE_TEXT:
+    "Almost there, please Sign Up so you can access our service!",
 };

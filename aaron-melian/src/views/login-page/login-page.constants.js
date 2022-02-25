@@ -32,4 +32,6 @@ export const constants = {
     USER_ERRORS: "Invalid Email",
     PASSWORD_ERRORS: "Invalid Password",
   },
+  WELCOME_MESSAGE_TEXT:
+    "Welcome to RentaBike, please login so you can start riding!",
 };

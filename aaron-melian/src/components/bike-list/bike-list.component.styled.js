@@ -10,10 +10,10 @@ BikeListWrapperStyled.displayName = "BikeListWrapperStyled";
 
 export const IconWrapperStyled = styled.div`
   display: flex;
-  margin: 6px auto;
   justify-content: center;
-  width: 40%;
+  margin: 6px auto;
   min-width: 200px;
+  width: 40%;
 `;
 IconWrapperStyled.displayName = "IconWrapperStyled";
 
@@ -23,10 +23,10 @@ export const BikeModelWrapperStyled = styled.div`
 BikeModelWrapperStyled.displayName = "BikeModelWrapperStyled";
 
 export const ButtonWrapperStyled = styled.div`
+  justify-content: center;
   margin: 0 auto;
   margin-top: 12px;
   width: 100%;
-  justify-content: center;
 `;
 ButtonWrapperStyled.displayName = "ButtonWrapperStyled";
 
@@ -36,10 +36,10 @@ export const RatingWrapperStyled = styled.div`
 RatingWrapperStyled.displayName = "RatingWrapperStyled";
 
 export const RatingTitleStyled = styled.h5`
+  justify-content: center;
   margin: 0 auto;
   margin-top: 12px;
   width: 100%;
-  justify-content: center;
 `;
 RatingTitleStyled.displayName = "RatingTitleStyled";
 

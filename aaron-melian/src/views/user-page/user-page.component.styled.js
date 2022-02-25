@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const UserPageWrapperStyled = styled.div`
-  width: 100%;
   text-align: center;
+  width: 100%;
 `;
 UserPageWrapperStyled.displayName = "UserPageWrapperStyled";
 

@@ -13,10 +13,13 @@ import SignUpPage from "../../views/sign-up-page/sign-up-page.component";
 import UserPage from "../../views/user-page/user-page.component";
 
 // Components
-import LogOut from "../../components/log-out/log-out.component";
+import Header from "../../layout/header/header.component";
 
 // Constants
 import { routes } from "./custom-router.routes";
+
+// Styles
+import { RoutesWrapperStyled } from "./custom-router.component.styled";
 
 const RequireAuthUserPage = ({ children, firebaseUserData, isManager }) => {
   if (firebaseUserData.isEmpty) {
@@ -62,11 +65,9 @@ const CustomRouter = () => {
   }, [firebaseUserData, dispatch]);
 
   return (
-    <section>
-      <BrowserRouter>
-        <header className="App-header">
-          {!firebaseUserData.isEmpty && <LogOut />}
-        </header>
+    <BrowserRouter>
+      <Header />
+      <RoutesWrapperStyled>
         <Routes>
           <Route
             index
@@ -114,8 +115,8 @@ const CustomRouter = () => {
             element={<Navigate to={routes.LOGIN} replace />}
           />
         </Routes>
-      </BrowserRouter>
-    </section>
+      </RoutesWrapperStyled>
+    </BrowserRouter>
   );
 };
 
