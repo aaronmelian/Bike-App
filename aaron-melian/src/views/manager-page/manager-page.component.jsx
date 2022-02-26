@@ -29,7 +29,9 @@ const ManagerPage = () => {
 
   const renderComponent = (index) => {
     const ComponentName = constants.BREADCRUMB_NAMES[index].component;
-    return <ComponentName />;
+    return (
+      <ComponentName currentList={constants.BREADCRUMB_NAMES[index].label} />
+    );
   };
 
   const cancelUserModal = () => {

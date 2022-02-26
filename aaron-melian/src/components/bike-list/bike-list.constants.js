@@ -27,8 +27,14 @@ export const constants = {
   CANCEL_BUTTON_PROPS: {
     text: "Cancel",
   },
+  HISTORY_BUTTON_PROPS: {
+    text: "History",
+  },
   RATE_BIKE_SUCCESS_MESSAGE: "Bike rated!!",
-
   AVERAGE_RATING_TEXT: "Av. Rating:",
   YOUR_RATING_TEXT: "Your Rating:",
+  SEARCH_LOCATION_TEXT: "Search by location",
+  SEARCH_ID_TEXT: "Search by id",
+  COPY_TO_CLIPBOARD_BIKE_MESSAGE: "Bike ID copied to clipboard!",
+  NO_MATCHING_RESULTS_TEXT: "No matching results . . .",
 };

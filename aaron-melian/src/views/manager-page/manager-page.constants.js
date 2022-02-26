@@ -1,17 +1,10 @@
 import BikeListComponent from "../../components/bike-list/bike-list.component";
-
-const UserListComponent = () => {
-  return <h3>UserList</h3>;
-};
-
-const ManagerListComponent = () => {
-  return <h3>ManagerList</h3>;
-};
+import UserListComponent from "../../components/user-list/user-list.component";
 
 export const constants = {
   BREADCRUMB_NAMES: [
     { label: "Users", component: UserListComponent },
-    { label: "Managers", component: ManagerListComponent },
+    { label: "Managers", component: UserListComponent },
     { label: "Bikes", component: BikeListComponent },
   ],
   BUTTON_PROPS: {

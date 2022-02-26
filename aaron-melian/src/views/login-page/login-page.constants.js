@@ -29,8 +29,8 @@ export const constants = {
     PASSWORD_ERRORS: ["auth/wrong-password"],
   },
   AUTH_ERROR_TEXTS: {
-    USER_ERRORS: "Invalid Email",
-    PASSWORD_ERRORS: "Invalid Password",
+    USER_ERRORS: "Invalid Email or Password",
+    PASSWORD_ERRORS: "Invalid Email or Password",
   },
   WELCOME_MESSAGE_TEXT:
     "Welcome to RentaBike, please login so you can start riding!",

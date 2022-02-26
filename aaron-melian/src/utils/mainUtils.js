@@ -5,7 +5,10 @@ import moment from "moment";
 import { globalConstants } from "../globalConstants/globalConstants.constants";
 
 export const momentConfig = (date) => {
-  return moment(date, globalConstants.DATE_FORMAT);
+  if (date) {
+    return moment(date, globalConstants.DATE_FORMAT);
+  }
+  return moment();
 };
 
 export const momentToMMDDYYYY = (moment) => {

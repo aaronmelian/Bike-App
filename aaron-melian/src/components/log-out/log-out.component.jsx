@@ -10,6 +10,8 @@ import "firebase/compat/firestore";
 // Redux
 import { useDispatch } from "react-redux";
 import { logOut } from "../../store/actions/authActions";
+import { removeUserList } from "../../store/actions/userActions";
+import { removeBikeList } from "../../store/actions/bikeActions";
 
 // AntD
 import { Button } from "antd";
@@ -24,8 +26,11 @@ const LogOut = () => {
   const dispatch = useDispatch();
 
   const logUserOut = () => {
-    auth.signOut();
     dispatch(logOut());
+    dispatch(removeUserList());
+    dispatch(removeBikeList());
+
+    auth.signOut();
     navigate(routes.EMPTY);
   };
 

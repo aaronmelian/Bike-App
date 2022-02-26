@@ -35,7 +35,7 @@ const BikeHistoryModal = ({
     return momentConfig(rentObj2.rentEnd) - momentConfig(rentObj1.rentEnd);
   });
 
-  const data = bikeHistory.map((rent, i) => {
+  const data = sortedData.map((rent, i) => {
     return {
       key: `${rent.by.id}-${i}`,
       start: rent.rentStart,

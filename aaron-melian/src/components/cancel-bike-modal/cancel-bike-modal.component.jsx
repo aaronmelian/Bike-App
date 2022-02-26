@@ -34,6 +34,7 @@ const CancelBikeModal = ({
   title,
 }) => {
   const bikeList = useSelector((state) => state.bikes.bikeList);
+  const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
 
   const cancelableReservations = bikeList
@@ -42,11 +43,27 @@ const CancelBikeModal = ({
       return momentConfig(rent.rentEnd).endOf(globalConstants.DAY) > moment();
     });
 
+  const cancelableReservationsSorted =
+    cancelableReservations &&
+    cancelableReservations.length &&
+    cancelableReservations.sort(
+      (reserv1, reserv2) =>
+        momentConfig(reserv2.rentEnd) - momentConfig(reserv1.rentEnd)
+    );
+
   const cancelBike = (reservData) => {
     firebase
       .firestore()
       .collection(globalConstants.COLLECTIONS.BIKES)
       .doc(bikeToCancel.id)
+      .update({
+        rentList: firebase.firestore.FieldValue.arrayRemove(reservData),
+      });
+
+    firebase
+      .firestore()
+      .collection(globalConstants.COLLECTIONS.USERS)
+      .doc(userInfo.uid)
       .update({
         rentList: firebase.firestore.FieldValue.arrayRemove(reservData),
       });
@@ -59,7 +76,7 @@ const CancelBikeModal = ({
     cancelCancelRentBikeModal();
   };
 
-  const data = cancelableReservations.map((reserv) => {
+  const data = cancelableReservationsSorted.map((reserv) => {
     return {
       key: reserv.rentStart,
       start: reserv.rentStart,

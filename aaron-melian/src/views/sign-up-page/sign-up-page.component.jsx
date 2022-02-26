@@ -164,9 +164,9 @@ const SignUpPage = () => {
       <Form
         name={constants.FORM_NAME}
         initialValues={{
-          username: "test2",
-          email: "test2@test.com",
-          emailConfirmation: "test2@test.com",
+          username: "test4",
+          email: "usertest4@test.com",
+          emailConfirmation: "usertest4@test.com",
           password: "123456",
           passwordConfirmation: "123456",
         }}

@@ -12,6 +12,7 @@ import { getBikes } from "../../store/actions/bikeActions";
 // Components
 import BikeHistoryModal from "../bike-history-modal/bike-history-modal.component";
 import BikeModal from "../bike-modal/bike-modal.component";
+import SearchByTwo from "../search-by-two/search-by-two.component";
 import CancelBikeModal from "../cancel-bike-modal/cancel-bike-modal.component";
 import Icon from "../icon/icon.component";
 import RentBikeModal from "../rent-bike-modal/rent-bike-modal.component";
@@ -42,9 +43,11 @@ import {
   BikeListWrapperStyled,
   BikeModelWrapperStyled,
   ButtonWrapperStyled,
-  IconWrapperStyled,
   historyButtonStyled,
+  iconPointerStyleIfManager,
+  IconWrapperStyled,
   ModelTextTitleStyled,
+  NoMatchingResultsTextStyled,
   RangePickerWrapperStyled,
   RatingTitleStyled,
   RatingWrapperStyled,
@@ -62,12 +65,22 @@ const BikeList = ({ currentList }) => {
   const [filteredBikeList, setFilteredBikeList] = useState(null);
   const [requestedDates, setRequestedDates] = useState([]);
 
+  const [searchFilterId, setSearchFilterId] = useState("");
+  const [searchFilterLocation, setSearchFilterLocation] = useState("");
+
   const bikeList = useSelector((state) => state.bikes.bikeList);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const isManager = userInfo && userInfo.isManager;
 
   const dispatch = useDispatch();
   const { RangePicker } = DatePicker;
+
+  const onSearchLocationHandler = (e) => {
+    setSearchFilterLocation(e.target.value);
+  };
+  const onSearchIdHandler = (e) => {
+    setSearchFilterId(e.target.value);
+  };
 
   const deleteBike = async (id) => {
     await deleteDoc(
@@ -127,6 +140,16 @@ const BikeList = ({ currentList }) => {
     setBikeHistory(bike.rentList);
   };
 
+  const handleCancelReserve = (bike) => {
+    setShowCancelReserveModal(true);
+    setBikeToCancel(bike);
+  };
+
+  const handleCopyToClipboardBike = (id) => {
+    navigator.clipboard.writeText(id);
+    message.success(constants.COPY_TO_CLIPBOARD_BIKE_MESSAGE);
+  };
+
   useEffect(() => {
     if (!bikeList.length) {
       dispatch(getBikes());
@@ -136,6 +159,11 @@ const BikeList = ({ currentList }) => {
   useEffect(() => {
     setRequestedDates([]);
   }, [currentList, bikeList]);
+
+  useEffect(() => {
+    setSearchFilterId("");
+    setSearchFilterLocation("");
+  }, [currentList]);
 
   useEffect(() => {
     let newList = [...bikeList];
@@ -161,16 +189,36 @@ const BikeList = ({ currentList }) => {
         );
       });
     }
-    setFilteredBikeList(newList);
-  }, [userInfo, bikeList, currentList, requestedDates]);
 
-  const handleCancelReserve = (bike) => {
-    setShowCancelReserveModal(true);
-    setBikeToCancel(bike);
-  };
+    newList = newList.filter((bike) => {
+      const containsIdFilter = bike.id.includes(searchFilterId);
+      const containsLocationFilter = bike.location
+        .toLowerCase()
+        .includes(searchFilterLocation.toLowerCase());
+
+      return containsIdFilter && containsLocationFilter;
+    });
+
+    setFilteredBikeList(newList);
+  }, [
+    userInfo,
+    bikeList,
+    currentList,
+    requestedDates,
+    searchFilterLocation,
+    searchFilterId,
+  ]);
 
   return (
     <>
+      <SearchByTwo
+        firstValue={searchFilterLocation}
+        firstOnChange={onSearchLocationHandler}
+        firstPlaceholder={constants.SEARCH_LOCATION_TEXT}
+        secondOnChange={isManager && onSearchIdHandler}
+        secondPlaceholder={constants.SEARCH_ID_TEXT}
+        secondValue={searchFilterId}
+      />
       {showBikeModal && (
         <BikeModal
           show={showBikeModal}
@@ -214,8 +262,8 @@ const BikeList = ({ currentList }) => {
       )}
 
       <BikeListWrapperStyled>
-        {bikeList.length !== 0 &&
-          (filteredBikeList || bikeList).map((bike) => {
+        {filteredBikeList && filteredBikeList.length > 0 ? (
+          filteredBikeList.map((bike) => {
             const prevRating =
               userInfo &&
               bike.ratingList &&
@@ -243,10 +291,15 @@ const BikeList = ({ currentList }) => {
                     onClick={() => handleShowBikeHistoryModal(bike)}
                     style={{ ...historyButtonStyled }}
                   >
-                    History
+                    {constants.HISTORY_BUTTON_PROPS.text}
                   </Button>
                 )}
-                <IconWrapperStyled>
+                <IconWrapperStyled
+                  style={isManager ? { ...iconPointerStyleIfManager } : {}}
+                  onClick={() =>
+                    isManager && handleCopyToClipboardBike(bike.id)
+                  }
+                >
                   <Icon icon={bike.model} color={bike.color} />
                 </IconWrapperStyled>
                 <RatingWrapperStyled>
@@ -296,7 +349,7 @@ const BikeList = ({ currentList }) => {
                     </Popconfirm>
                   </ButtonWrapperStyled>
                 )}
-                {currentList === constants.TABS.BIKES && (
+                {currentList === constants.TABS.BIKES && !isManager && (
                   <ButtonWrapperStyled>
                     <Button
                       style={{ width: 80, margin: 4 }}
@@ -319,7 +372,12 @@ const BikeList = ({ currentList }) => {
                   )}
               </Card>
             );
-          })}
+          })
+        ) : (
+          <NoMatchingResultsTextStyled>
+            {constants.NO_MATCHING_RESULTS_TEXT}
+          </NoMatchingResultsTextStyled>
+        )}
       </BikeListWrapperStyled>
     </>
   );

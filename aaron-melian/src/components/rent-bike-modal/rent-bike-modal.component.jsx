@@ -8,9 +8,6 @@ import firebase from "../../fbConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { getBikes } from "../../store/actions/bikeActions";
 
-// Moment
-import moment from "moment";
-
 // Components
 import Backrop from "../backdrop/backdrop.component";
 import Icon from "../icon/icon.component";
@@ -36,7 +33,7 @@ import {
   IconWrapperStyled,
 } from "./rent-bike-modal.component.styled";
 
-const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
+const RentBikeModal = ({ bikeData, cancelRentBikeModal, title, show }) => {
   const { RangePicker } = DatePicker;
 
   const userInfo = useSelector((state) => state.auth.userInfo);
@@ -63,6 +60,13 @@ const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
       .update({
         rentList: firebase.firestore.FieldValue.arrayUnion(rentedObj),
       });
+    firebase
+      .firestore()
+      .collection(globalConstants.COLLECTIONS.USERS)
+      .doc(userInfo.uid)
+      .update({
+        rentList: firebase.firestore.FieldValue.arrayUnion(rentedObj),
+      });
     message.success(constants.RENT_BIKE_SUCCESS_MESSAGE);
     dispatch(getBikes());
     cancelRentBikeModal();
@@ -81,11 +85,6 @@ const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
 
     if (bikeData.rentList) {
       bikeData.rentList.forEach((rent) => {
-        const a = isDateContainedInTwoDates(
-          rent.rentStart,
-          bikeFormData.dateRange[0],
-          bikeFormData.dateRange[1]
-        );
         if (
           isDateContainedInTwoDates(
             rent.rentStart,
@@ -106,7 +105,7 @@ const RentBikeModal = ({ show, cancelRentBikeModal, title, bikeData }) => {
   };
 
   const disabledDate = (current) => {
-    if (current && current < moment().startOf(globalConstants.DAY)) {
+    if (current && current < momentConfig().startOf(globalConstants.DAY)) {
       return true;
     }
 

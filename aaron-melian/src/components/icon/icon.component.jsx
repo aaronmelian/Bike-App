@@ -4,7 +4,7 @@ import React from "react";
 // Constants
 import { constants } from "./icon.constants";
 
-const Icon = React.memo(function Icon({ icon, color }) {
+const Icon = React.memo(function Icon({ color, icon }) {
   const renderIcon = () => require(`${constants.ICON_SUBPATH}${icon}`).default;
   const SVG = renderIcon();
 

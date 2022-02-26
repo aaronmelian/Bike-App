@@ -56,3 +56,15 @@ RangePickerWrapperStyled.displayName = "RangePickerWrapperStyled";
 export const historyButtonStyled = {
   marginBottom: "10px",
 };
+
+export const iconPointerStyleIfManager = {
+  cursor: "pointer",
+};
+
+export const NoMatchingResultsTextStyled = styled.p`
+  cursor: pointer;
+  font-size: 150%;
+  font-weight: 700;
+  margin: 60px auto;
+`;
+NoMatchingResultsTextStyled.displayName = "NoMatchingResultsTextStyled";
