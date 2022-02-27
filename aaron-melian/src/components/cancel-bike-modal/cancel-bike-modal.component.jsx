@@ -82,7 +82,6 @@ const CancelBikeModal = ({
   const data =
     cancelableReservationsSorted &&
     cancelableReservationsSorted.map((reserv) => {
-      console.log(reserv.by.id);
       return {
         key: reserv.rentStart,
         start: reserv.rentStart,

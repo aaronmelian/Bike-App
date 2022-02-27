@@ -27,7 +27,7 @@ export const signIn = ({ email, password }) => {
   };
 };
 
-export const getData = ({ email }) => {
+export const getLoggedUserData = ({ email }) => {
   return (dispatch) => {
     firebase
       .firestore()

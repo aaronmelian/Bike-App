@@ -3,7 +3,9 @@ import React, { useState } from "react";
 
 // Redux
 import { getUsers } from "../../store/actions/userActions";
-import { useDispatch } from "react-redux";
+import { getBikes } from "../../store/actions/bikeActions";
+import { getLoggedUserData } from "../../store/actions/authActions";
+import { useDispatch, useSelector } from "react-redux";
 
 // Firebase
 import firebase from "firebase/compat/app";
@@ -35,6 +37,9 @@ import {
 const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+
+  const bikeList = useSelector((state) => state.bikes.bikeList);
+  const userInfo = useSelector((state) => state.auth.userInfo);
 
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -113,7 +118,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
           message.success(constants.SIGN_UP_SUCCESS_MESSAGE);
           dispatch(getUsers());
           form.resetFields();
-          setHasImage(false);
+          setImageUploaded("");
           cancelUserModal();
         })
         .catch((err) => {
@@ -130,7 +135,89 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
     }
   };
 
-  const editUser = async (userFormData) => {};
+  const editUser = async (userFormData) => {
+    console.log(userFormData);
+    clearErrors();
+    let formReady = true;
+    await firebase
+      .firestore()
+      .collection(globalConstants.COLLECTIONS.USERS)
+      .where(constants.USERNAME_INPUT_PROPS.name, "==", userFormData.username)
+      .get()
+      .then((resp) => {
+        if (
+          resp.docs[0] &&
+          resp.docs[0].data() &&
+          resp.docs[0].data().uid !== userData.uid
+        ) {
+          setUsernameError(constants.SIGN_UP_CALL_ERROR_TEXTS.USERNAME_TAKEN);
+          formReady = false;
+        }
+      });
+
+    // Udate User
+    if (formReady) {
+      let newUserData = { username: userFormData.username };
+      if (userFormData.upload) {
+        newUserData.imgUrl = userFormData.upload[0].thumbUrl;
+        if (!userData.isManager) {
+          newUserData.rentList =
+            userData.rentList &&
+            userData.rentList.map((rent) => {
+              return { ...rent, avatar: userFormData.upload[0].thumbUrl };
+            });
+        }
+      }
+      firebase
+        .firestore()
+        .collection(globalConstants.COLLECTIONS.USERS)
+        .doc(userData.uid)
+        .update({
+          ...newUserData,
+        })
+        .then(() => {
+          if (userFormData.upload && !userData.isManager) {
+            const bikesToUpdate = bikeList.filter((bike) => {
+              return (
+                bike.rentList &&
+                bike.rentList.find((rent) => {
+                  return rent.by.id === userData.uid;
+                })
+              );
+            });
+            bikesToUpdate.forEach((bike) => {
+              const newRentList = bike.rentList.map((rent) => {
+                return {
+                  ...rent,
+                  by: {
+                    avatar: userFormData.upload[0].thumbUrl,
+                    id: userData.uid,
+                  },
+                };
+              });
+              firebase
+                .firestore()
+                .collection(globalConstants.COLLECTIONS.BIKES)
+                .doc(bike.id)
+                .update({
+                  rentList: newRentList,
+                });
+            });
+          }
+          message.success("User udpated succesfully");
+          form.resetFields();
+          dispatch(getUsers());
+          dispatch(getBikes());
+          dispatch(
+            getLoggedUserData({
+              email: userInfo.email,
+            })
+          );
+          setImageUploaded("");
+          cancelUserModal();
+        });
+    }
+  };
 
   const handleOk = (userFormData) => {
     if (editing) {
@@ -150,10 +237,16 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
     return e && e.fileList;
   };
 
-  const [hasImage, setHasImage] = useState(false);
+  const [imageUploaded, setImageUploaded] = useState("");
 
   const handlePicChange = (e) => {
-    setHasImage(e && e.fileList && e.fileList.length >= 1);
+    if (!e.fileList.length) {
+      setImageUploaded("");
+    } else {
+      setTimeout(() => {
+        setImageUploaded(e.fileList[0].thumbUrl);
+      }, 50);
+    }
   };
 
   const dummyRequest = ({ file, onSuccess }) => {
@@ -161,6 +254,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
       onSuccess(constants.OK_TEXT);
     }, 0);
   };
+
   return (
     <Backrop show={show}>
       <Modal
@@ -182,7 +276,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
         <FormContentWrapper>
           {userData && userData.imgUrl && (
             <UserPicWrapperStyled>
-              <UserPic picUrl={userData.imgUrl} large={true} />
+              <UserPic picUrl={imageUploaded || userData.imgUrl} large={true} />
             </UserPicWrapperStyled>
           )}
           <Form
@@ -211,50 +305,60 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
             </Form.Item>
             <ErrorTextStyled>{usernameError}</ErrorTextStyled>
 
-            <Form.Item
-              labelCol={{ span: 24 }}
-              {...constants.EMAIL_INPUT_PROPS}
-              rules={[
-                {
-                  required: true,
-                  message: constants.EMAIL_INPUT_VALIDATE_MESSAGE,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <ErrorTextStyled>{emailError}</ErrorTextStyled>
+            {!editing && (
+              <>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  {...constants.EMAIL_INPUT_PROPS}
+                  rules={[
+                    {
+                      required: true,
+                      message: constants.EMAIL_INPUT_VALIDATE_MESSAGE,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <ErrorTextStyled>{emailError}</ErrorTextStyled>
+              </>
+            )}
+
+            {!editing && (
+              <>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  style={{
+                    ...formItemStyles,
+                  }}
+                  {...constants.PASSWORD_INPUT_PROPS}
+                  rules={[
+                    {
+                      required: true,
+                      message: constants.PASSWORD_INPUT_VALIDATE_MESSAGE,
+                    },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <ErrorTextStyled>{passwordError}</ErrorTextStyled>
+              </>
+            )}
+
+            {!editing && (
+              <Form.Item
+                labelCol={{ span: 24 }}
+                name={constants.MANAGER_INPUT_PROPS.name}
+                valuePropName={constants.MANAGER_INPUT_PROPS.valuePropName}
+              >
+                <Checkbox>{constants.MANAGER_INPUT_PROPS.label}</Checkbox>
+              </Form.Item>
+            )}
 
             <Form.Item
               labelCol={{ span: 24 }}
-              style={{
-                ...formItemStyles,
-              }}
-              {...constants.PASSWORD_INPUT_PROPS}
               rules={[
                 {
-                  required: true,
-                  message: constants.PASSWORD_INPUT_VALIDATE_MESSAGE,
-                },
-              ]}
-            >
-              <Input.Password />
-            </Form.Item>
-            <ErrorTextStyled>{passwordError}</ErrorTextStyled>
-
-            <Form.Item
-              labelCol={{ span: 24 }}
-              name={constants.MANAGER_INPUT_PROPS.name}
-              valuePropName={constants.MANAGER_INPUT_PROPS.valuePropName}
-            >
-              <Checkbox>{constants.MANAGER_INPUT_PROPS.label}</Checkbox>
-            </Form.Item>
-
-            <Form.Item
-              labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: true,
+                  required: !editing,
                   message: constants.UPLOAD_INPUT_VALIDATE_MESSAGE,
                 },
               ]}
@@ -266,7 +370,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
                 onChange={handlePicChange}
                 {...constants.UPLOAD_PROPS}
               >
-                {!hasImage && <PlusOutlined />}
+                {!imageUploaded && <PlusOutlined />}
               </Upload>
             </Form.Item>
           </Form>

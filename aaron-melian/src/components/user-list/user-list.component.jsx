@@ -222,7 +222,7 @@ const UserList = ({ currentList }) => {
                     pagination={false}
                   />
                 )}
-                {/* <ButtonWrapperStyled>
+                <ButtonWrapperStyled>
                   <Button
                     style={{ width: 80, margin: 4 }}
                     onClick={() => handleShowUserModal(user)}
@@ -237,7 +237,7 @@ const UserList = ({ currentList }) => {
                       {constants.DELETE_BUTTON_PROPS.text}
                     </Button>
                   </Popconfirm>
-                </ButtonWrapperStyled> */}
+                </ButtonWrapperStyled>
               </Card>
             );
           })

@@ -12,13 +12,10 @@ import { momentConfig } from "../../utils/mainUtils";
 import { constants } from ".././bike-history-modal/bike-history-modal.constants";
 
 // AntD
-import { Button, message, Modal, Table } from "antd";
+import { message, Modal, Table } from "antd";
 
 // Styles
-import {
-  userButtonStyled,
-  UsernameWrapperStyled,
-} from "./bike-history-modal.component.styled";
+import { UsernameWrapperStyled } from "./bike-history-modal.component.styled";
 
 const BikeHistoryModal = ({
   bikeHistory,
@@ -41,16 +38,12 @@ const BikeHistoryModal = ({
       start: rent.rentStart,
       end: rent.rentEnd,
       username: (
-        <UsernameWrapperStyled>
+        <UsernameWrapperStyled
+          onClick={() => {
+            handleCopyToClickboard(rent.by.id);
+          }}
+        >
           <UserPic picUrl={rent.by.avatar} />
-          <Button
-            style={{ ...userButtonStyled }}
-            onClick={() => {
-              handleCopyToClickboard(rent.by.id);
-            }}
-          >
-            {rent.by.username}
-          </Button>
         </UsernameWrapperStyled>
       ),
     };

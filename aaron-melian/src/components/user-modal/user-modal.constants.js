@@ -7,7 +7,7 @@ export const constants = {
   VALIDATE_FAILED_TEXT: "Validate Failed:",
 
   USERNAME_INPUT_PROPS: {
-    label: "Username",
+    label: "Name",
     name: "username",
   },
   USERNAME_INPUT_VALIDATE_MESSAGE: "Please fill the username field.",
@@ -31,7 +31,7 @@ export const constants = {
   },
   UPLOAD_FORM_ITEM_PROPS: {
     name: "upload",
-    label: "Upload",
+    label: "Profile Picture",
     valuePropName: "fileList",
   },
   UPLOAD_INPUT_VALIDATE_MESSAGE: "Please upload the user picture.",

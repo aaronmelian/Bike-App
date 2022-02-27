@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
-import { getData } from "../../store/actions/authActions";
+import { getLoggedUserData } from "../../store/actions/authActions";
 
 // Views
 import LogInPage from "../../views/login-page/login-page.component";
@@ -57,7 +57,7 @@ const CustomRouter = () => {
   useEffect(() => {
     if (!firebaseUserData.isEmpty) {
       dispatch(
-        getData({
+        getLoggedUserData({
           email: firebaseUserData.email,
         })
       );

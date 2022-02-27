@@ -1,12 +1,8 @@
 import styled from "styled-components";
 
 export const UsernameWrapperStyled = styled.div`
-  align-items: center;
   display: flex;
-  flex-direction: column;
+  cursor: pointer;
+  justify-content: center;
 `;
 UsernameWrapperStyled.displayName = "UsernameWrapperStyled";
-
-export const userButtonStyled = {
-  margin: "4px auto",
-};

@@ -1,7 +1,7 @@
 export const constants = {
   FORM_NAME: "signUp",
   USERNAME_INPUT_PROPS: {
-    label: "Username",
+    label: "Name",
     name: "username",
   },
   EMAIL_INPUT_PROPS: {
