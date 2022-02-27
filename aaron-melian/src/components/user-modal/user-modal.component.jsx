@@ -140,7 +140,6 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
   };
 
   const editUser = async (userFormData) => {
-    console.log(userFormData);
     clearErrors();
     let formReady = true;
     await firebase

@@ -115,6 +115,7 @@ const SignUpPage = () => {
               email,
               uid,
               imgUrl,
+              isDeleted: false,
             })
             .catch((error) => {
               console.log(error);

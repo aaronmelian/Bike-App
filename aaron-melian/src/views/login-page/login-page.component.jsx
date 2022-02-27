@@ -20,7 +20,6 @@ import { Button, Form, Input } from "antd";
 // Styles
 import {
   ErrorTextStyled,
-  EvaluatorMessage,
   FormWrapperStyled,
   LoginButtonWrapperStyled,
   signUpLinkStyled,
@@ -51,7 +50,7 @@ const LogInPage = () => {
         if (resp.docs[0] && resp.docs[0].data()) {
           const user = resp.docs[0].data();
           if (user.isDeleted) {
-            setLogInError(constants.DELETED_USER);
+            setLogInError(constants.AUTH_ERROR_TEXTS.DELETED_USER);
             formReady = false;
           }
         }
@@ -132,24 +131,6 @@ const LogInPage = () => {
           {constants.SIGN_UP_LINK_TEXT}
         </Link>
       </SignUpLinkWrapperStyled>
-      <EvaluatorMessage>
-        <p>
-          <b>Message to the evaluator: </b>
-          You can log in with this credentials to begin testing:
-        </p>
-        <p>
-          <b>User: managertest@test.com</b>
-        </p>
-        <p>
-          <b>Password: 123456</b>
-        </p>
-        <p>
-          <b>User: usertest@test.com</b>
-        </p>
-        <p>
-          <b>Password: 123456</b>
-        </p>
-      </EvaluatorMessage>
     </FormWrapperStyled>
   );
 };
