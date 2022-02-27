@@ -55,5 +55,8 @@ export const constants = {
   },
   SIGN_UP_ERROR_MESSAGE: "User creation failed!",
   SIGN_UP_SUCCESS_MESSAGE: "User created succesfully!",
+  EDIT_USER_ERROR_MESSAGE: "User udpate failed.",
+  EDIT_USER_SUCCESS_MESSAGE: "User udpated succesfully.",
+  SECONDARY_INITIALIZE: "Secondary",
   OK_TEXT: "ok",
 };

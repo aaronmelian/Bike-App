@@ -31,6 +31,7 @@ export const constants = {
   AUTH_ERROR_TEXTS: {
     USER_ERRORS: "Invalid Email or Password",
     PASSWORD_ERRORS: "Invalid Email or Password",
+    DELETED_USER: "User has been deleted.",
   },
   WELCOME_MESSAGE_TEXT:
     "Welcome to RentaBike, please login so you can start riding!",

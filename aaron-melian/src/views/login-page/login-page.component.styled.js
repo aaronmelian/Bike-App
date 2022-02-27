@@ -32,6 +32,11 @@ export const SignUpLinkWrapperStyled = styled.div`
 `;
 SignUpLinkWrapperStyled.displayName = "SignUpLinkWrapperStyled";
 
+export const EvaluatorMessage = styled.div`
+  margin-top: 30px;
+`;
+EvaluatorMessage.displayName = "EvaluatorMessage";
+
 export const signUpLinkStyled = {
   fontWeight: "600",
 };

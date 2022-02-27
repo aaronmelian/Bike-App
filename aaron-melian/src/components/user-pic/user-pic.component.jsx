@@ -13,13 +13,16 @@ import { Image } from "antd";
 // Styles
 import { imageStyles } from "./user-pic.component.styled";
 
-const UserPic = ({ picUrl, large }) => {
+const UserPic = ({ deleted, picUrl, large }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   return userInfo && userInfo.imgUrl ? (
     <Image
       {...constants.IMAGE_PROPS}
       width={large ? 100 : 60}
-      style={{ ...imageStyles }}
+      style={{
+        ...imageStyles,
+        filter: deleted ? constants.GREYSCALE : constants.NONE,
+      }}
       src={picUrl || userInfo.imgUrl}
     />
   ) : null;

@@ -48,7 +48,6 @@ const RentBikeModal = ({ bikeData, cancelRentBikeModal, title, show }) => {
       rentEnd: momentToMMDDYYYY(bikeFormData.dateRange[1]),
       by: {
         id: userInfo.uid,
-        avatar: userInfo.imgUrl,
         username: userInfo.username,
       },
       bike: bikeData.id,

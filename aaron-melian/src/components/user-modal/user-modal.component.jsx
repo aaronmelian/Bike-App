@@ -38,12 +38,12 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  const bikeList = useSelector((state) => state.bikes.bikeList);
   const userInfo = useSelector((state) => state.auth.userInfo);
 
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [imageUploaded, setImageUploaded] = useState("");
 
   const addUser = async (userFormData) => {
     handleCreateUser(userFormData);
@@ -91,7 +91,10 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
       const config = {
         ...fireAPI,
       };
-      const secondaryApp = firebase.initializeApp(config, "Secondary");
+      const secondaryApp = firebase.initializeApp(
+        config,
+        constants.SECONDARY_INITIALIZE
+      );
       secondaryApp
         .auth()
         .createUserWithEmailAndPassword(
@@ -109,6 +112,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
               uid: firebaseUser.user.uid,
               imgUrl: userFormData.upload[0].thumbUrl,
               isManager: !!userFormData.manager,
+              isDeleted: false,
             })
             .catch((error) => {
               console.log(error);
@@ -160,13 +164,6 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
       let newUserData = { username: userFormData.username };
       if (userFormData.upload) {
         newUserData.imgUrl = userFormData.upload[0].thumbUrl;
-        if (!userData.isManager) {
-          newUserData.rentList =
-            userData.rentList &&
-            userData.rentList.map((rent) => {
-              return { ...rent, avatar: userFormData.upload[0].thumbUrl };
-            });
-        }
       }
       firebase
         .firestore()
@@ -176,35 +173,7 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
           ...newUserData,
         })
         .then(() => {
-          if (userFormData.upload && !userData.isManager) {
-            const bikesToUpdate = bikeList.filter((bike) => {
-              return (
-                bike.rentList &&
-                bike.rentList.find((rent) => {
-                  return rent.by.id === userData.uid;
-                })
-              );
-            });
-            bikesToUpdate.forEach((bike) => {
-              const newRentList = bike.rentList.map((rent) => {
-                return {
-                  ...rent,
-                  by: {
-                    avatar: userFormData.upload[0].thumbUrl,
-                    id: userData.uid,
-                  },
-                };
-              });
-              firebase
-                .firestore()
-                .collection(globalConstants.COLLECTIONS.BIKES)
-                .doc(bike.id)
-                .update({
-                  rentList: newRentList,
-                });
-            });
-          }
-          message.success("User udpated succesfully");
+          message.success(constants.EDIT_USER_SUCCESS_MESSAGE);
           form.resetFields();
           dispatch(getUsers());
           dispatch(getBikes());
@@ -215,6 +184,9 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
           );
           setImageUploaded("");
           cancelUserModal();
+        })
+        .catch((err) => {
+          message.success(constants.EDIT_USER_ERROR_MESSAGE);
         });
     }
   };
@@ -236,8 +208,6 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
     }
     return e && e.fileList;
   };
-
-  const [imageUploaded, setImageUploaded] = useState("");
 
   const handlePicChange = (e) => {
     if (!e.fileList.length) {
@@ -276,7 +246,11 @@ const UserModal = ({ cancelUserModal, editing, title, show, userData }) => {
         <FormContentWrapper>
           {userData && userData.imgUrl && (
             <UserPicWrapperStyled>
-              <UserPic picUrl={imageUploaded || userData.imgUrl} large={true} />
+              <UserPic
+                picUrl={imageUploaded || userData.imgUrl}
+                large={true}
+                deleted={userData.isDeleted}
+              />
             </UserPicWrapperStyled>
           )}
           <Form

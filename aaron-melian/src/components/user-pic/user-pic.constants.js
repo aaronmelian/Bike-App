@@ -3,4 +3,6 @@ export const constants = {
     width: 50,
     preview: false,
   },
+  GREYSCALE: "grayscale(100%)",
+  NONE: "none",
 };

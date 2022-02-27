@@ -14,7 +14,8 @@ import { constants } from "./sign-up-page.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
 
 // Antd
-import { Form, Input, Button } from "antd";
+import { Button, Form, Input, Upload } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 // Styles
 import {
@@ -34,6 +35,7 @@ const SignUpPage = () => {
   const [passwordErrorConfirmation, setPasswordErrorConfirmation] = useState(
     ""
   );
+  const [imageUploaded, setImageUploaded] = useState("");
 
   const formFieldMatch = (data1, data2) => {
     return data1 === data2;
@@ -50,20 +52,7 @@ const SignUpPage = () => {
     clearErrors();
     let formReady = true;
 
-    if (!username) {
-      formReady = false;
-      setUsernameError(constants.SIGN_UP_FORM_ERROR_TEXTS.USERNAME_FILL);
-    }
-
-    if (!email) {
-      formReady = false;
-      setEmailError(constants.SIGN_UP_FORM_ERROR_TEXTS.EMAIL_FILL);
-    }
-
-    if (!password) {
-      formReady = false;
-      setPasswordError(constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWORD_FILL);
-    } else if (password.length < 6) {
+    if (password.length < 6) {
       formReady = false;
       setPasswordError(constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWORD_WEAK);
     }
@@ -104,7 +93,13 @@ const SignUpPage = () => {
       });
 
     if (formReady) {
-      const imgUrl = await getRandomProfileImage();
+      let imgUrl = "";
+      if (values.upload && values.upload.length > 0) {
+        imgUrl = values.upload[0].thumbUrl;
+      } else {
+        imgUrl = await getRandomProfileImage();
+      }
+
       const auth = firebase.auth();
       auth
         .createUserWithEmailAndPassword(email, password)
@@ -161,46 +156,129 @@ const SignUpPage = () => {
     }
   };
 
+  const normFile = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  const handlePicChange = (e) => {
+    if (!e.fileList.length) {
+      setImageUploaded("");
+    } else {
+      setTimeout(() => {
+        setImageUploaded(e.fileList[0].thumbUrl);
+      }, 50);
+    }
+  };
+
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess(constants.OK_TEXT);
+    }, 0);
+  };
+
   return (
     <FormWrapperStyled>
       <WelcomeTextStyled>{constants.WELCOME_MESSAGE_TEXT}</WelcomeTextStyled>
       <Form
         name={constants.FORM_NAME}
         initialValues={{
-          username: "test4",
-          email: "usertest4@test.com",
-          emailConfirmation: "usertest4@test.com",
-          password: "123456",
-          passwordConfirmation: "123456",
+          username: "",
+          email: "",
+          emailConfirmation: "",
+          password: "",
+          passwordConfirmation: "",
         }}
         onFinish={onFinish}
       >
-        <Form.Item {...constants.USERNAME_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.USERNAME_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message: constants.SIGN_UP_FORM_ERROR_TEXTS.USERNAME_FILL,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
         <ErrorTextStyled>{usernameError}</ErrorTextStyled>
 
-        <Form.Item {...constants.EMAIL_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.EMAIL_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message: constants.SIGN_UP_FORM_ERROR_TEXTS.EMAIL_FILL,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
         <ErrorTextStyled>{emailError}</ErrorTextStyled>
 
-        <Form.Item {...constants.EMAIL_CONFIRMATION_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.EMAIL_CONFIRMATION_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message:
+                constants.SIGN_UP_FORM_ERROR_TEXTS.EMAIL_CONFIRMATION_FILL,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
         <ErrorTextStyled>{emailErrorConfirmation}</ErrorTextStyled>
 
-        <Form.Item {...constants.PASSWORD_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.PASSWORD_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message: constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWORD_FILL,
+            },
+          ]}
+        >
           <Input.Password />
         </Form.Item>
         <ErrorTextStyled>{passwordError}</ErrorTextStyled>
 
-        <Form.Item {...constants.PASSWORD_CONFIRMATION_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.PASSWORD_CONFIRMATION_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message:
+                constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWOR_CONFIRMATION_FILL,
+            },
+          ]}
+        >
           <Input.Password />
         </Form.Item>
         <ErrorTextStyled>{passwordErrorConfirmation}</ErrorTextStyled>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.UPLOAD_FORM_ITEM_PROPS}
+          getValueFromEvent={normFile}
+        >
+          <Upload
+            customRequest={dummyRequest}
+            onChange={handlePicChange}
+            {...constants.UPLOAD_PROPS}
+          >
+            {!imageUploaded && <PlusOutlined />}
+          </Upload>
+        </Form.Item>
 
-        <Form.Item>
+        <Form.Item labelCol={{ span: 24 }}>
           <SignUpButtonWrapperStyled>
             <Button {...constants.SIGN_UP_BUTTON_PROPS}>
               {constants.SIGN_UP_BUTTON_TEXT}

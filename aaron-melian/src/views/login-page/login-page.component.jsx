@@ -2,12 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+// Firebase
+import firebase from "../../fbConfig";
+
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../store/actions/authActions";
 
 // Constants
 import { constants } from "./login-page.constants";
+import { globalConstants } from "../../globalConstants/globalConstants.constants";
 import { routes } from "../../hoc/customRouter/custom-router.routes";
 
 // Antd
@@ -16,6 +20,7 @@ import { Button, Form, Input } from "antd";
 // Styles
 import {
   ErrorTextStyled,
+  EvaluatorMessage,
   FormWrapperStyled,
   LoginButtonWrapperStyled,
   signUpLinkStyled,
@@ -25,8 +30,6 @@ import {
 
 const LogInPage = () => {
   const [logInError, setLogInError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -38,28 +41,32 @@ const LogInPage = () => {
 
   const handleLogin = async (values) => {
     clearErrors();
-    const { email, password } = values;
     let formReady = true;
-    if (!email) {
-      formReady = false;
-      setEmailError(constants.LOGIN_FORM_ERROR_TEXTS.EMAIL_FILL);
-    }
-    if (!password) {
-      formReady = false;
-      setPasswordError(constants.LOGIN_FORM_ERROR_TEXTS.PASSWORD_FILL);
-    }
-    formReady &&
+    await firebase
+      .firestore()
+      .collection(globalConstants.COLLECTIONS.USERS)
+      .where(globalConstants.EMAIL, "==", values.email)
+      .get()
+      .then((resp) => {
+        if (resp.docs[0] && resp.docs[0].data()) {
+          const user = resp.docs[0].data();
+          if (user.isDeleted) {
+            setLogInError(constants.DELETED_USER);
+            formReady = false;
+          }
+        }
+      });
+    if (formReady) {
       dispatch(
         signIn({
           ...values,
         })
       );
+    }
   };
 
   const clearErrors = () => {
     setLogInError("");
-    setEmailError("");
-    setPasswordError("");
   };
 
   useEffect(() => {
@@ -79,20 +86,36 @@ const LogInPage = () => {
       <Form
         name={constants.FORM_NAME}
         initialValues={{
-          email: "managertest@test.com",
-          password: "123456",
+          email: "",
+          password: "",
         }}
         onFinish={onFinish}
       >
-        <Form.Item {...constants.EMAIL_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.EMAIL_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message: constants.LOGIN_FORM_ERROR_TEXTS.PASSWORD_FILL,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
-        <ErrorTextStyled>{emailError}</ErrorTextStyled>
 
-        <Form.Item {...constants.PASSWORD_INPUT_PROPS}>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          {...constants.PASSWORD_INPUT_PROPS}
+          rules={[
+            {
+              required: true,
+              message: constants.LOGIN_FORM_ERROR_TEXTS.EMAIL_FILL,
+            },
+          ]}
+        >
           <Input.Password />
         </Form.Item>
-        <ErrorTextStyled>{passwordError}</ErrorTextStyled>
         <ErrorTextStyled>{logInError}</ErrorTextStyled>
 
         <Form.Item>
@@ -109,6 +132,24 @@ const LogInPage = () => {
           {constants.SIGN_UP_LINK_TEXT}
         </Link>
       </SignUpLinkWrapperStyled>
+      <EvaluatorMessage>
+        <p>
+          <b>Message to the evaluator: </b>
+          You can log in with this credentials to begin testing:
+        </p>
+        <p>
+          <b>User: managertest@test.com</b>
+        </p>
+        <p>
+          <b>Password: 123456</b>
+        </p>
+        <p>
+          <b>User: usertest@test.com</b>
+        </p>
+        <p>
+          <b>Password: 123456</b>
+        </p>
+      </EvaluatorMessage>
     </FormWrapperStyled>
   );
 };

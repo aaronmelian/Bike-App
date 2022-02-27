@@ -14,6 +14,12 @@ const UserHistoryModal = ({
   title,
   show,
 }) => {
+  const newData = data
+    ? data.map((obj) => {
+        return { ...obj, key: `fullData-${obj.key}` };
+      })
+    : [];
+
   return (
     <Backrop show={show}>
       <Modal
@@ -22,7 +28,7 @@ const UserHistoryModal = ({
         visible={show}
         footer={null}
       >
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table columns={columns} dataSource={newData} pagination={false} />
       </Modal>
     </Backrop>
   );

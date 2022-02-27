@@ -1,6 +1,9 @@
 // React
 import React from "react";
 
+// Redux
+import { useSelector } from "react-redux";
+
 // Components
 import Backrop from "../backdrop/backdrop.component";
 import UserPic from "../user-pic/user-pic.component";
@@ -23,6 +26,13 @@ const BikeHistoryModal = ({
   show,
   title,
 }) => {
+  const userList = useSelector((state) => state.users.userList);
+
+  const userPictures = {};
+  userList.forEach((user) => {
+    userPictures[user.uid] = { image: user.imgUrl, isDeleted: user.isDeleted };
+  });
+
   const handleCopyToClickboard = (id) => {
     navigator.clipboard.writeText(id);
     message.success(constants.COPY_TO_CLIPBOARD_MESSAGE);
@@ -43,7 +53,10 @@ const BikeHistoryModal = ({
             handleCopyToClickboard(rent.by.id);
           }}
         >
-          <UserPic picUrl={rent.by.avatar} />
+          <UserPic
+            picUrl={userPictures[rent.by.id].image}
+            deleted={userPictures[rent.by.id].isDeleted}
+          />
         </UsernameWrapperStyled>
       ),
     };

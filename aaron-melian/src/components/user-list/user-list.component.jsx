@@ -22,9 +22,10 @@ import { momentConfig } from "../../utils/mainUtils";
 
 // Constants
 import { constants } from "./user-list.constants";
+import { globalConstants } from "../../globalConstants/globalConstants.constants";
 
 // AntD
-import { Button, Card, Table, message, Popconfirm } from "antd";
+import { Button, Card, Checkbox, Table, message, Popconfirm } from "antd";
 
 // Styles
 import {
@@ -43,12 +44,14 @@ const UserList = ({ currentList }) => {
   const dispatch = useDispatch();
   const userList = useSelector((state) => state.users.userList);
   const bikeList = useSelector((state) => state.bikes.bikeList);
+  const userInfo = useSelector((state) => state.auth.userInfo);
 
   const [filteredUserList, setFilteredUserList] = useState([]);
   const [userReservationData, setUserReservationData] = useState([]);
 
   const [searchFilterId, setSearchFilterId] = useState("");
   const [searchFilterUsername, setSearchFilterUsername] = useState("");
+  const [showDeleted, setShowDeleted] = useState(false);
 
   const [showUserHistoryModal, setShowUserHistoryModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -59,6 +62,10 @@ const UserList = ({ currentList }) => {
   };
   const onSearchIdHandler = (e) => {
     setSearchFilterId(e.target.value);
+  };
+
+  const onChangeIsDeletedCheck = () => {
+    setShowDeleted(!showDeleted);
   };
 
   const handleCopyToClipboardBike = (id) => {
@@ -87,7 +94,23 @@ const UserList = ({ currentList }) => {
     setUserData(user);
   };
 
-  const deleteUser = (userId) => {};
+  const deleteUser = (userId) => {
+    firebase
+      .firestore()
+      .collection(globalConstants.COLLECTIONS.USERS)
+      .doc(userId)
+      .update({
+        isDeleted: true,
+      })
+      .then(() => {
+        message.success(constants.USER_DELETED_SUCCESS_MESSAGE);
+        dispatch(getUsers());
+        dispatch(getBikes());
+      })
+      .catch(() => {
+        message.success(constants.USER_DELETED_ERROR_MESSAGE);
+      });
+  };
 
   useEffect(() => {
     if (!userList.length) {
@@ -111,11 +134,22 @@ const UserList = ({ currentList }) => {
       const containsUsernameFilter = user.username
         .toLowerCase()
         .includes(searchFilterUsername.toLowerCase());
-
-      return isManagerFilter && containsIdFilter && containsUsernameFilter;
+      const deletedFilter = user.isDeleted === showDeleted;
+      return (
+        isManagerFilter &&
+        containsIdFilter &&
+        containsUsernameFilter &&
+        deletedFilter
+      );
     });
     setFilteredUserList(newList);
-  }, [userList, currentList, searchFilterId, searchFilterUsername]);
+  }, [
+    userList,
+    currentList,
+    searchFilterId,
+    searchFilterUsername,
+    showDeleted,
+  ]);
 
   useEffect(() => {
     setSearchFilterId("");
@@ -132,6 +166,11 @@ const UserList = ({ currentList }) => {
         secondPlaceholder={constants.SEARCH_ID_TEXT}
         secondValue={searchFilterId}
       />
+
+      <Checkbox onChange={onChangeIsDeletedCheck}>
+        {constants.FILTER_BY_DELETED}
+      </Checkbox>
+
       {showUserHistoryModal && (
         <UserHistoryModal
           cancelUserHistoryModal={cancelUserModals}
@@ -161,7 +200,7 @@ const UserList = ({ currentList }) => {
                     (bike) => bike.id === rent.bike
                   );
                   if (!bikeData) {
-                    return;
+                    return {};
                   }
                   return {
                     key: `${user.uid}-${i}`,
@@ -199,7 +238,7 @@ const UserList = ({ currentList }) => {
                       style={{ ...userPickStyled }}
                       onClick={() => handleCopyToClipboardUserId(user.uid)}
                     >
-                      <UserPic picUrl={user.imgUrl} />
+                      <UserPic picUrl={user.imgUrl} deleted={user.isDeleted} />
                     </UserPicWrapperStyled>
                     {!user.isManager && (
                       <UserInfoWrapperStyled>
@@ -229,14 +268,16 @@ const UserList = ({ currentList }) => {
                   >
                     {constants.EDIT_BUTTON_PROPS.text}
                   </Button>
-                  <Popconfirm
-                    {...constants.POPCONFIRM_PROPS}
-                    onConfirm={() => deleteUser(user.uid)}
-                  >
-                    <Button style={{ width: 80, margin: 4 }}>
-                      {constants.DELETE_BUTTON_PROPS.text}
-                    </Button>
-                  </Popconfirm>
+                  {userInfo.uid !== user.uid && !user.isDeleted && (
+                    <Popconfirm
+                      {...constants.POPCONFIRM_PROPS}
+                      onConfirm={() => deleteUser(user.uid)}
+                    >
+                      <Button style={{ width: 80, margin: 4 }}>
+                        {constants.DELETE_BUTTON_PROPS.text}
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </ButtonWrapperStyled>
               </Card>
             );

@@ -47,4 +47,7 @@ export const constants = {
   NO_MATCHING_RESULTS_TEXT: "No matching results . . .",
   SEARCH_USERNAME_TEXT: "Search by username",
   SEARCH_ID_TEXT: "Search by id",
+  FILTER_BY_DELETED: "Show only deleted users:",
+  USER_DELETED_SUCCESS_MESSAGE: "User deleted succesfully",
+  USER_DELETED_ERROR_MESSAGE: "User delete failed",
 };

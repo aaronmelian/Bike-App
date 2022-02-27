@@ -22,7 +22,7 @@ import rootReducer from "./store/reducers/rootReducer";
 import App from "./App";
 
 // AntD
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 
 // Styles
 import "./index.css";

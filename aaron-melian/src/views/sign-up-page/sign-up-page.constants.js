@@ -20,6 +20,16 @@ export const constants = {
     label: "Confirm Password",
     name: "passwordConfirmation",
   },
+  UPLOAD_FORM_ITEM_PROPS: {
+    name: "upload",
+    label: "Profile Picture",
+    valuePropName: "fileList",
+  },
+  UPLOAD_PROPS: {
+    listType: "picture-card",
+    name: "logo",
+    action: "/upload.do",
+  },
   SIGN_UP_BUTTON_PROPS: {
     type: "primary",
     htmlType: "submit",
@@ -32,7 +42,9 @@ export const constants = {
   SIGN_UP_FORM_ERROR_TEXTS: {
     USERNAME_FILL: "Please fill your username.",
     EMAIL_FILL: "Please fill your email.",
+    EMAIL_CONFIRMATION_FILL: "Please repeat your email.",
     PASSWORD_FILL: "Please fill your password.",
+    PASSWOR_CONFIRMATION_FILL: "Please repeat your password.",
     PASSWORD_WEAK: "Password should be at least 6 characters.",
     PASSWORD_MATCH: "Passwords must match.",
     EMAIL_MATCH: "Emails must match.",
