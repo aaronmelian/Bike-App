@@ -21,6 +21,6 @@ export const bikeModalStyles = {
   flexWrap: "wrap",
   justifyContent: "center",
 };
-export const colotInputStyles = {
+export const colorInputStyles = {
   cursor: "pointer",
 };

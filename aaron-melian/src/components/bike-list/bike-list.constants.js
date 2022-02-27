@@ -4,10 +4,10 @@ export const constants = {
     BIKES: "Bikes",
   },
   MODAL_TITLES: {
-    EDIT_BIKE: "Edit this Bike!",
-    RENT_BIKE: "Rent this Bike!",
-    CANCEL_BIKE_RESERVATION: "Cancel a reservation",
-    BIKE_HISTORY: "Bike History",
+    EDIT_BIKE: "Edit this Bike:",
+    RENT_BIKE: "Rent this Bike:",
+    CANCEL_BIKE_RESERVATION: "Cancel a reservation:",
+    BIKE_HISTORY: "Bike History:",
   },
   POPCONFIRM_PROPS: {
     placement: "topRight",

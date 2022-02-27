@@ -10,10 +10,12 @@ import { getUsers } from "../../store/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 
 // Components
+
 import Icon from "../icon/icon.component";
 import SearchByTwo from "../search-by-two/search-by-two.component";
-import UserPic from "../user-pic/user-pic.component";
 import UserHistoryModal from "../user-history-modal/user-history-modal.component";
+import UserModal from "../../components/user-modal/user-modal.component";
+import UserPic from "../user-pic/user-pic.component";
 
 // Utils
 import { momentConfig } from "../../utils/mainUtils";
@@ -22,10 +24,11 @@ import { momentConfig } from "../../utils/mainUtils";
 import { constants } from "./user-list.constants";
 
 // AntD
-import { Button, Card, Table, message } from "antd";
+import { Button, Card, Table, message, Popconfirm } from "antd";
 
 // Styles
 import {
+  ButtonWrapperStyled,
   IconWrapperStyled,
   NoMatchingResultsTextStyled,
   userPickStyled,
@@ -42,10 +45,14 @@ const UserList = ({ currentList }) => {
   const bikeList = useSelector((state) => state.bikes.bikeList);
 
   const [filteredUserList, setFilteredUserList] = useState([]);
-  const [showUserHistoryModal, setShowUserHistoryModal] = useState(false);
   const [userReservationData, setUserReservationData] = useState([]);
+
   const [searchFilterId, setSearchFilterId] = useState("");
   const [searchFilterUsername, setSearchFilterUsername] = useState("");
+
+  const [showUserHistoryModal, setShowUserHistoryModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const onSearchUsernameHandler = (e) => {
     setSearchFilterUsername(e.target.value);
@@ -68,10 +75,19 @@ const UserList = ({ currentList }) => {
     setShowUserHistoryModal(true);
   };
 
-  const cancelUserHistoryModal = () => {
+  const cancelUserModals = () => {
     setUserReservationData([]);
     setShowUserHistoryModal(false);
+    setShowUserModal(false);
+    setUserData({});
   };
+
+  const handleShowUserModal = (user) => {
+    setShowUserModal(true);
+    setUserData(user);
+  };
+
+  const deleteUser = (userId) => {};
 
   useEffect(() => {
     if (!userList.length) {
@@ -118,11 +134,20 @@ const UserList = ({ currentList }) => {
       />
       {showUserHistoryModal && (
         <UserHistoryModal
-          cancelUserHistoryModal={() => cancelUserHistoryModal()}
+          cancelUserHistoryModal={cancelUserModals}
           show={showUserHistoryModal}
-          title={constants.FULL_RESERVATIONS_MODAL_TITLE}
+          title={constants.MODAL_TITLES.FULL_RESERVATIONS}
           data={userReservationData}
           columns={constants.COLUMNS}
+        />
+      )}
+      {showUserModal && (
+        <UserModal
+          show={showUserModal}
+          cancelUserModal={cancelUserModals}
+          title={constants.MODAL_TITLES.EDIT_USER}
+          userData={userData}
+          editing={true}
         />
       )}
       <UserListWrapperStyled>
@@ -135,6 +160,9 @@ const UserList = ({ currentList }) => {
                   const bikeData = bikeList.find(
                     (bike) => bike.id === rent.bike
                   );
+                  if (!bikeData) {
+                    return;
+                  }
                   return {
                     key: `${user.uid}-${i}`,
                     start: rent.rentStart,
@@ -194,6 +222,22 @@ const UserList = ({ currentList }) => {
                     pagination={false}
                   />
                 )}
+                {/* <ButtonWrapperStyled>
+                  <Button
+                    style={{ width: 80, margin: 4 }}
+                    onClick={() => handleShowUserModal(user)}
+                  >
+                    {constants.EDIT_BUTTON_PROPS.text}
+                  </Button>
+                  <Popconfirm
+                    {...constants.POPCONFIRM_PROPS}
+                    onConfirm={() => deleteUser(user.uid)}
+                  >
+                    <Button style={{ width: 80, margin: 4 }}>
+                      {constants.DELETE_BUTTON_PROPS.text}
+                    </Button>
+                  </Popconfirm>
+                </ButtonWrapperStyled> */}
               </Card>
             );
           })

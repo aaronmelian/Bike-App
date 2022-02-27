@@ -33,6 +33,7 @@ export const constants = {
     USERNAME_FILL: "Please fill your username.",
     EMAIL_FILL: "Please fill your email.",
     PASSWORD_FILL: "Please fill your password.",
+    PASSWORD_WEAK: "Password should be at least 6 characters.",
     PASSWORD_MATCH: "Passwords must match.",
     EMAIL_MATCH: "Emails must match.",
   },

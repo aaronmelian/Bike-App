@@ -109,7 +109,12 @@ const ManagerPage = () => {
         </Popover>
       </AffixButtonWrapperStyled>
       {showUserModal && (
-        <UserModal show={showUserModal} cancelUserModal={cancelUserModal} />
+        <UserModal
+          show={showUserModal}
+          cancelUserModal={cancelUserModal}
+          title={constants.USER_MODAL_TITLE}
+          bikeData={{}}
+        />
       )}
       {showBikeModal && (
         <BikeModal

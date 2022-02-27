@@ -1,5 +1,5 @@
 export const constants = {
-  FORM_NAME: "addBike",
+  FORM_NAME: "bikeForm",
   LOCATION_INPUT_PROPS: {
     label: "Location",
     name: "location",
@@ -14,7 +14,6 @@ export const constants = {
     name: "model",
     label: "Model",
   },
-
   DEFAULT_STATE: {
     COLOR: "#000000",
     MODEL: "allAround",

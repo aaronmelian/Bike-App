@@ -18,5 +18,6 @@ export const constants = {
   POPOVER_BUTTON_PROPS: {
     shape: "circle",
   },
-  BIKE_MODAL_TITLE: "Add a Bike!",
+  BIKE_MODAL_TITLE: "Add a Bike:",
+  USER_MODAL_TITLE: "Add a User:",
 };

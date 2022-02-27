@@ -47,6 +47,14 @@ export const NoMatchingResultsTextStyled = styled.p`
 `;
 NoMatchingResultsTextStyled.displayName = "NoMatchingResultsTextStyled";
 
+export const ButtonWrapperStyled = styled.div`
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 12px;
+  width: 100%;
+`;
+ButtonWrapperStyled.displayName = "ButtonWrapperStyled";
+
 export const userPickStyled = {
   cursor: "pointer",
 };

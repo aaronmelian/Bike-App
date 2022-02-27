@@ -63,6 +63,9 @@ const SignUpPage = () => {
     if (!password) {
       formReady = false;
       setPasswordError(constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWORD_FILL);
+    } else if (password.length < 6) {
+      formReady = false;
+      setPasswordError(constants.SIGN_UP_FORM_ERROR_TEXTS.PASSWORD_WEAK);
     }
 
     if (!formFieldMatch(email, emailConfirmation)) {

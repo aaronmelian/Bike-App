@@ -22,7 +22,7 @@ import { Input, Form, Modal, message, Select } from "antd";
 
 // Styles
 import {
-  colotInputStyles,
+  colorInputStyles,
   bikeModalStyles,
   FormItemWrapper,
   IconWrapperStyled,
@@ -37,6 +37,9 @@ const BikeModal = ({ bikeData, cancelBikeAddModal, editing, show, title }) => {
     model || constants.DEFAULT_STATE.MODEL
   );
   const dispatch = useDispatch();
+
+  const { Option } = Select;
+  const [form] = Form.useForm();
 
   const addBike = async (bikeFormData) => {
     const newBike = doc(
@@ -75,8 +78,6 @@ const BikeModal = ({ bikeData, cancelBikeAddModal, editing, show, title }) => {
     cancelBikeAddModal();
   };
 
-  const { Option } = Select;
-  const [form] = Form.useForm();
   return (
     <Backrop show={show}>
       <Modal
@@ -144,7 +145,7 @@ const BikeModal = ({ bikeData, cancelBikeAddModal, editing, show, title }) => {
               rules={[{ required: true }]}
             >
               <Input
-                style={{ ...colotInputStyles }}
+                style={{ ...colorInputStyles }}
                 type={constants.COLOR_INPUT_TYPE}
                 onBlur={(val) => setBikeColor(val.target.value)}
               />

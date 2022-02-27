@@ -40,7 +40,10 @@ const CancelBikeModal = ({
   const cancelableReservations = bikeList
     .find((bike) => bikeToCancel.id === bike.id)
     .rentList.filter((rent) => {
-      return momentConfig(rent.rentEnd).endOf(globalConstants.DAY) > moment();
+      return (
+        momentConfig(rent.rentEnd).endOf(globalConstants.DAY) > moment() &&
+        rent.by.id === userInfo.uid
+      );
     });
 
   const cancelableReservationsSorted =
@@ -76,20 +79,23 @@ const CancelBikeModal = ({
     cancelCancelRentBikeModal();
   };
 
-  const data = cancelableReservationsSorted.map((reserv) => {
-    return {
-      key: reserv.rentStart,
-      start: reserv.rentStart,
-      end: reserv.rentEnd,
-      action: (
-        <ButtonWrapperStyled>
-          <Button onClick={() => cancelBike(reserv)}>
-            {constants.CANCEL_BUTTON_TEXT}
-          </Button>
-        </ButtonWrapperStyled>
-      ),
-    };
-  });
+  const data =
+    cancelableReservationsSorted &&
+    cancelableReservationsSorted.map((reserv) => {
+      console.log(reserv.by.id);
+      return {
+        key: reserv.rentStart,
+        start: reserv.rentStart,
+        end: reserv.rentEnd,
+        action: (
+          <ButtonWrapperStyled>
+            <Button onClick={() => cancelBike(reserv)}>
+              {constants.CANCEL_BUTTON_TEXT}
+            </Button>
+          </ButtonWrapperStyled>
+        ),
+      };
+    });
 
   return (
     <Backrop show={show}>
