@@ -16,9 +16,8 @@ Rent a bike for a specific period of time.
 Cancel a bike reservation.
 Rate a previously reserved bike.
 
-Message to the evaluator:
-
 You can log in with this credentials to begin testing:
+
 User: managertest@test.com
 Password: 123456
 
